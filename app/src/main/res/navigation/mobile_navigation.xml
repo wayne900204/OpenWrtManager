@@ -13,13 +13,19 @@
 
     <fragment
         android:id="@+id/nav_gallery"
-        android:name="com.example.openwrtmanager.ui.gallery.GalleryFragment"
-        android:label="@string/menu_gallery"
-        tools:layout="@layout/fragment_gallery" />
+        android:name="com.example.openwrtmanager.ui.device.DeviceFragment"
+        android:label="@string/menu_device"
+        tools:layout="@layout/fragment_device" />
 
     <fragment
         android:id="@+id/nav_slideshow"
         android:name="com.example.openwrtmanager.ui.slideshow.SlideshowFragment"
         android:label="@string/menu_slideshow"
         tools:layout="@layout/fragment_slideshow" />
+    <fragment
+        android:id="@+id/add_device_page"
+        android:name="com.example.openwrtmanager.ui.device.AddDeviceFragment"
+        android:label="CFragment"
+        tools:layout="@layout/add_device_fragment">
+    </fragment>
 </navigation>

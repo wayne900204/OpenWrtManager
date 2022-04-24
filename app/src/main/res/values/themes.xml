@@ -17,9 +17,15 @@
     <style name="Theme.OpenWrtManager.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <item name="android:textSize">14sp</item>
     </style>
 
     <style name="Theme.OpenWrtManager.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="Theme.OpenWrtManager.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="DropDownHint" parent="TextAppearance.Design.Hint">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
 </resources>
