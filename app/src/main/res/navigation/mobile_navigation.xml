@@ -12,20 +12,58 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
-        android:id="@+id/nav_gallery"
+        android:id="@+id/nav_device"
         android:name="com.example.openwrtmanager.ui.device.DeviceFragment"
         android:label="@string/menu_device"
-        tools:layout="@layout/fragment_device" />
+        tools:layout="@layout/fragment_device" >
+        <action
+            android:id="@+id/actionDeviceFragmentToAddDeviceFragment"
+            app:destination="@id/add_device_page" />
+    </fragment>
 
     <fragment
-        android:id="@+id/nav_slideshow"
-        android:name="com.example.openwrtmanager.ui.slideshow.SlideshowFragment"
+        android:id="@+id/nav_identity"
+        android:name="com.example.openwrtmanager.ui.identity.IdentityFragment"
         android:label="@string/menu_slideshow"
-        tools:layout="@layout/fragment_slideshow" />
+        tools:layout="@layout/fragment_identity">
+        <action
+            android:id="@+id/actionIdentityFragmentToAddIdentityFragment"
+            app:destination="@id/add_identity_page" />
+    </fragment>
+
+
     <fragment
         android:id="@+id/add_device_page"
         android:name="com.example.openwrtmanager.ui.device.AddDeviceFragment"
-        android:label="CFragment"
-        tools:layout="@layout/add_device_fragment">
+        tools:layout="@layout/add_device_fragment" />
+
+    <fragment
+        android:id="@+id/add_identity_page"
+        android:name="com.example.openwrtmanager.ui.identity.AddIdentityFragment"
+        tools:layout="@layout/add_identity_fragment">
+        <argument
+            android:name="uuid"
+            app:argType="string"
+            android:defaultValue="@null"
+            app:nullable="true"/>
+        <argument
+            android:name="display"
+            app:argType="string"
+            android:defaultValue="@null"
+            app:nullable="true"/>
+        <argument
+            android:name="username"
+            app:argType="string"
+            android:defaultValue="@null"
+            app:nullable="true"/>
+        <argument
+            android:name="password"
+            app:argType="string"
+            android:defaultValue="@null"
+            app:nullable="true"/>
+        <argument
+            android:name="id"
+            app:argType="integer"
+            android:defaultValue="0"/>
     </fragment>
 </navigation>

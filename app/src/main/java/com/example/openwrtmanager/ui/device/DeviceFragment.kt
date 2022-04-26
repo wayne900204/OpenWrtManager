@@ -4,13 +4,18 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import androidx.fragment.app.*
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.NavHostFragment.Companion.findNavController
-import com.example.openwrtmanager.R
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.openwrtmanager.com.example.openwrtmanager.AppDatabase
+import com.example.openwrtmanager.com.example.openwrtmanager.ui.device.DeviceAdapter
+import com.example.openwrtmanager.com.example.openwrtmanager.ui.device.database.DeviceItem
+import com.example.openwrtmanager.com.example.openwrtmanager.ui.device.repository.DeviceItemRepository
+import com.example.openwrtmanager.com.example.openwrtmanager.ui.slideshow.repository.IdentityItemRepository
 import com.example.openwrtmanager.databinding.FragmentDeviceBinding
+import com.example.openwrtmanager.utils.AnyViewModelFactory
 
 class DeviceFragment : Fragment() {
     private val TAG = "DeviceFragment"
@@ -24,28 +29,37 @@ class DeviceFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        deviceViewModel =
-            ViewModelProvider(this).get(DeviceViewModel::class.java)
-
+    ): View {
         _binding = FragmentDeviceBinding.inflate(inflater, container, false)
-        val root: View = binding.root
+        return binding.root
+    }
 
-        val textView: TextView = binding.textGallery
-        deviceViewModel.text.observe(viewLifecycleOwner, Observer {
-            textView.text = it
-        })
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        val navController = findNavController(this)
-        binding.addRouter.setOnClickListener {
-            navController.navigate(R.id.add_device_page)
+        val todoItemDb = AppDatabase.getInstance(requireActivity().applicationContext)
+        val deviceItemRepo = DeviceItemRepository(todoItemDb)
+        val identityItemRpo = IdentityItemRepository(todoItemDb)
+        val viewModelFactory = AnyViewModelFactory {
+            DeviceViewModel(deviceItemRepo,identityItemRpo)
         }
-//      binding.addRouter.setOnClickListener { view ->
-//            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                .setAction("Action", null).show()
-//       }
+        val identityViewModel = ViewModelProvider(requireActivity(), viewModelFactory).get(
+            DeviceViewModel::class.java
+        )
 
-        return root
+        val adapter = DeviceAdapter()
+        binding.recyclerView.adapter = adapter
+        binding.recyclerView.layoutManager =
+            LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+
+        identityViewModel.todoLiveData.observe(
+            viewLifecycleOwner,
+            Observer { todos: List<DeviceItem> -> adapter.submitList(todos) })
+
+
+        binding.addRouter.setOnClickListener {
+            findNavController().navigate(DeviceFragmentDirections.actionDeviceFragmentToAddDeviceFragment())
+        }
     }
 
     override fun onDestroyView() {
