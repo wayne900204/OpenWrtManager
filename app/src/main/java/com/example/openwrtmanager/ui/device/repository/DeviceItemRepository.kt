@@ -19,7 +19,31 @@ class DeviceItemRepository(
         return database.deviceItemDao().findAll()
     }
 
-    suspend fun deleteDeviceItemByID(id: Int) {
-        database.deviceItemDao().deleteByID(id)
+    suspend fun deleteDeviceItemById(id: Int) {
+        database.deviceItemDao().deleteById(id)
+    }
+
+    fun getDeviceItemById(id: Int): LiveData<DeviceItem> {
+        return database.deviceItemDao().getById(id)
+    }
+
+    suspend fun updateDeviceItemById(
+        displayName: String,
+        address: String,
+        port: String,
+        identityUuid: String,
+        useHttpsConnection: Boolean,
+        ignoreBadCertificate: Boolean,
+        id: Int
+    ) {
+        database.deviceItemDao().updateById(
+            displayName,
+            address,
+            port,
+            identityUuid,
+            useHttpsConnection,
+            ignoreBadCertificate,
+            id
+        )
     }
 }

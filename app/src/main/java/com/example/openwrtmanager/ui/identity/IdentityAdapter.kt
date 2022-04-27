@@ -13,8 +13,13 @@ import com.example.openwrtmanager.com.example.openwrtmanager.ui.slideshow.databa
 
 
 class IdentityAdapter : RecyclerView.Adapter<IdentityAdapter.MyViewHolder>() {
+
+    private val TAG = IdentityAdapter::class.qualifiedName
     var feeds: List<IdentityItem> = listOf()
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): IdentityAdapter.MyViewHolder {
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): IdentityAdapter.MyViewHolder {
         return LayoutInflater.from(parent.context).inflate(R.layout.item_identitiy, parent, false)
             .run(::MyViewHolder)
     }
@@ -28,8 +33,6 @@ class IdentityAdapter : RecyclerView.Adapter<IdentityAdapter.MyViewHolder>() {
     inner class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val display = itemView.findViewById<TextView>(R.id.display)
         private val itemIdentity = itemView.findViewById<ConstraintLayout>(R.id.item_identity)
-        private val icon_router = itemView.findViewById<ImageView>(R.id.icon_router)
-//        private val itemIdentity = itemView.findViewById<ConstraintLayout>(R.id.item_identity)
 
         fun bindView(item: IdentityItem) {
             display.text = item.displayName
@@ -39,13 +42,14 @@ class IdentityAdapter : RecyclerView.Adapter<IdentityAdapter.MyViewHolder>() {
                     item.uuid,
                     item.displayName,
                     item.username,
-                    item.password, item.id)
+                    item.password, item.id, true
+                )
                 itemView.findNavController().navigate(action)
             }
         }
     }
 
-    fun submitList(todos: List<IdentityItem>) {
+    fun updateAdapterData(todos: List<IdentityItem>) {
         feeds = todos
         notifyDataSetChanged()
     }

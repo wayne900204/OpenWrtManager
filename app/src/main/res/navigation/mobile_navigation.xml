@@ -35,7 +35,16 @@
     <fragment
         android:id="@+id/add_device_page"
         android:name="com.example.openwrtmanager.ui.device.AddDeviceFragment"
-        tools:layout="@layout/add_device_fragment" />
+        tools:layout="@layout/add_device_fragment" >
+        <argument
+            android:name="id"
+            app:argType="integer"
+            android:defaultValue="0"/>
+        <argument
+            android:name="is_edit"
+            app:argType="boolean"
+            android:defaultValue="false"/>
+    </fragment>
 
     <fragment
         android:id="@+id/add_identity_page"
@@ -65,5 +74,9 @@
             android:name="id"
             app:argType="integer"
             android:defaultValue="0"/>
+        <argument
+            android:name="is_edit"
+            app:argType="boolean"
+            android:defaultValue="false"/>
     </fragment>
 </navigation>

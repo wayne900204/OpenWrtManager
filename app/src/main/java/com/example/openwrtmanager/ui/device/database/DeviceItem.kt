@@ -7,15 +7,15 @@ import java.util.*
     tableName = DeviceItem.TABLE_NAME
 )
 data class DeviceItem(
-    @ColumnInfo(name = COLUMN_UUID) var uuid:String,
-    @ColumnInfo(name = COLUMN_DISPLAY_NAME) var displayName:String,
-    @ColumnInfo(name = COLUMN_ADDRESS) var address:String,
-    @ColumnInfo(name = COLUMN_PORT) var port:String,
-    @ColumnInfo(name = COLUMN_IDENTITY_UUID) var identityUuid:String,
-    @ColumnInfo(name = COLUMN_USE_HTTPS_CONNECTION) var useHttpsConnection:Boolean,
-    @ColumnInfo(name = COLUMN_IGNORE_BAD_CERTIFICATE) var ignoreBadCertificate:Boolean,
+    @ColumnInfo(name = COLUMN_UUID) var uuid: String,
+    @ColumnInfo(name = COLUMN_DISPLAY_NAME) var displayName: String,
+    @ColumnInfo(name = COLUMN_ADDRESS) var address: String,
+    @ColumnInfo(name = COLUMN_PORT) var port: String,
+    @ColumnInfo(name = COLUMN_IDENTITY_UUID) var identityUuid: String,
+    @ColumnInfo(name = COLUMN_USE_HTTPS_CONNECTION) var useHttpsConnection: Boolean,
+    @ColumnInfo(name = COLUMN_IGNORE_BAD_CERTIFICATE) var ignoreBadCertificate: Boolean,
     @ColumnInfo(name = COLUMN_CREATED_AT) var createdAt: Date
-){
+) {
     companion object {
         const val TABLE_NAME = "device_items"
 
@@ -32,5 +32,6 @@ data class DeviceItem(
 
     // 必須為 var 才會有 setter
     @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = COLUMN_ID) var id: Int = 0
+    @ColumnInfo(name = COLUMN_ID)
+    var id: Int = 0
 }

@@ -21,10 +21,11 @@
         android:id="@+id/display_input"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="-4dp"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginLeft="-4dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/display" />
+        app:layout_constraintTop_toBottomOf="@+id/display"
+        tools:ignore="SpeakableTextPresentCheck" />
 
     <com.google.android.material.textfield.TextInputLayout
 
@@ -128,7 +129,18 @@
         android:text="Test"
         android:textColor="@color/white"
         app:layout_constraintTop_toBottomOf="@+id/ignore_bad_certificate" />
-
+    <androidx.appcompat.widget.AppCompatButton
+        android:visibility="gone"
+        android:id="@+id/delete"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="15dp"
+        android:background="@color/red"
+        android:text="Delete"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/test" />
     <androidx.appcompat.widget.AppCompatButton
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -139,7 +151,7 @@
         android:textColor="@color/white"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/test" />
+        app:layout_constraintTop_toBottomOf="@+id/delete" />
 </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!--<com.google.android.material.textfield.TextInputLayout-->

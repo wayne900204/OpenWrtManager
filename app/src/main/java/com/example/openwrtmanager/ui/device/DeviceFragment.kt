@@ -15,16 +15,15 @@ import com.example.openwrtmanager.com.example.openwrtmanager.ui.device.database.
 import com.example.openwrtmanager.com.example.openwrtmanager.ui.device.repository.DeviceItemRepository
 import com.example.openwrtmanager.com.example.openwrtmanager.ui.slideshow.repository.IdentityItemRepository
 import com.example.openwrtmanager.databinding.FragmentDeviceBinding
-import com.example.openwrtmanager.utils.AnyViewModelFactory
+import com.example.openwrtmanager.com.example.openwrtmanager.utils.AnyViewModelFactory
 
 class DeviceFragment : Fragment() {
-    private val TAG = "DeviceFragment"
-    private lateinit var deviceViewModel: DeviceViewModel
+
+    private val TAG = DeviceFragment::class.qualifiedName
     private var _binding: FragmentDeviceBinding? = null
-
-
     private val binding get() = _binding!!
 
+    private lateinit var deviceViewModel: DeviceViewModel
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -41,9 +40,9 @@ class DeviceFragment : Fragment() {
         val deviceItemRepo = DeviceItemRepository(todoItemDb)
         val identityItemRpo = IdentityItemRepository(todoItemDb)
         val viewModelFactory = AnyViewModelFactory {
-            DeviceViewModel(deviceItemRepo,identityItemRpo)
+            DeviceViewModel(deviceItemRepo, identityItemRpo)
         }
-        val identityViewModel = ViewModelProvider(requireActivity(), viewModelFactory).get(
+        deviceViewModel = ViewModelProvider(requireActivity(), viewModelFactory).get(
             DeviceViewModel::class.java
         )
 
@@ -52,10 +51,9 @@ class DeviceFragment : Fragment() {
         binding.recyclerView.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
 
-        identityViewModel.todoLiveData.observe(
+        deviceViewModel.todoLiveData.observe(
             viewLifecycleOwner,
-            Observer { todos: List<DeviceItem> -> adapter.submitList(todos) })
-
+            Observer { todos: List<DeviceItem> -> adapter.updateAdapterData(todos) })
 
         binding.addRouter.setOnClickListener {
             findNavController().navigate(DeviceFragmentDirections.actionDeviceFragmentToAddDeviceFragment())

@@ -1,4 +1,4 @@
-package com.example.openwrtmanager.utils
+package com.example.openwrtmanager.com.example.openwrtmanager.utils
 
 import androidx.room.TypeConverter
 import java.util.*

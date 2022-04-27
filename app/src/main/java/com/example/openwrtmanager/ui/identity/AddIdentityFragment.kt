@@ -11,17 +11,18 @@ import androidx.navigation.fragment.navArgs
 import com.example.openwrtmanager.com.example.openwrtmanager.AppDatabase
 import com.example.openwrtmanager.com.example.openwrtmanager.ui.slideshow.repository.IdentityItemRepository
 import com.example.openwrtmanager.databinding.AddIdentityFragmentBinding
-import com.example.openwrtmanager.utils.AnyViewModelFactory
+import com.example.openwrtmanager.ui.device.AddDeviceFragment
+import com.example.openwrtmanager.com.example.openwrtmanager.utils.AnyViewModelFactory
 
 class AddIdentityFragment : Fragment() {
-    private var _binding: AddIdentityFragmentBinding? = null
 
-    // This property is only valid between onCreateView and
-    // onDestroyView.
+    private val TAG = AddIdentityFragment::class.qualifiedName
+    private var _binding: AddIdentityFragmentBinding? = null
     private val binding get() = _binding!!
 
     val args: AddIdentityFragmentArgs by navArgs()
     private lateinit var identityViewModel: IdentityViewModel
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -53,16 +54,11 @@ class AddIdentityFragment : Fragment() {
     }
 
     private fun setAddIdentityFragmentArgs() {
-        if (!args.display.isNullOrEmpty()) {
+        if (args.isEdit) {
             binding.displayInput.setText(args.display)
-        }
-        if (!args.username.isNullOrEmpty()) {
             binding.usernameInput.setText(args.username)
-        }
-        if (!args.password.isNullOrEmpty()) {
             binding.passwordInput.setText(args.password)
-        }
-        if (args.password == null && args.username == null && args.uuid == null && args.display == null) {
+        } else {
             binding.delete.visibility = View.GONE
         }
     }
@@ -70,16 +66,22 @@ class AddIdentityFragment : Fragment() {
     private fun saveBtnOnClick() {
         binding.save.setOnClickListener {
             if (binding.displayInput.text.isNullOrEmpty()) {
-                binding.displayInput.setError("hihi-test")
+                binding.displayLayout.error = "Display Name is missing"
+            } else {
+                binding.displayLayout.error = null
             }
             if (binding.usernameInput.text.isNullOrEmpty()) {
-                binding.usernameInput.setError("Username is missing")
+                binding.usernameLayout.error = "Username is missing"
+            } else {
+                binding.usernameLayout.error = null
             }
             if (binding.passwordInput.text.isNullOrEmpty()) {
-                binding.passwordInput.setError("Username is missing")
+                binding.passwordLayout.error = "Password is missing"
+            } else {
+                binding.passwordLayout.error = null
             }
             if (!binding.usernameInput.text.isNullOrEmpty() && !binding.passwordInput.text.isNullOrEmpty()) {
-                if (!args.username.isNullOrEmpty() && !args.password.isNullOrEmpty() && !args.uuid.isNullOrEmpty()) {
+                if (args.isEdit) {
                     val display = binding.displayInput.text.toString();
                     val username = binding.usernameInput.text.toString();
                     val password = binding.passwordInput.text.toString();

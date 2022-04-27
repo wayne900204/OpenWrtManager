@@ -9,7 +9,7 @@ import com.example.openwrtmanager.com.example.openwrtmanager.ui.device.database.
 import com.example.openwrtmanager.com.example.openwrtmanager.ui.device.database.DeviceItemDao
 import com.example.openwrtmanager.com.example.openwrtmanager.ui.slideshow.database.IdentityItem
 import com.example.openwrtmanager.com.example.openwrtmanager.ui.slideshow.database.IdentityItemDao
-import com.example.openwrtmanager.utils.Converters
+import com.example.openwrtmanager.com.example.openwrtmanager.utils.Converters
 
 @Database(
     version = 1,

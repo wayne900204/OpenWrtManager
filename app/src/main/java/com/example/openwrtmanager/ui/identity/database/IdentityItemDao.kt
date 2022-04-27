@@ -3,7 +3,8 @@ package com.example.openwrtmanager.com.example.openwrtmanager.ui.slideshow.datab
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Query
-import com.example.openwrtmanager.utils.GenericDao
+import com.example.openwrtmanager.com.example.openwrtmanager.utils.GenericDao
+
 @Dao
 interface IdentityItemDao : GenericDao<IdentityItem> {
 
@@ -11,8 +12,8 @@ interface IdentityItemDao : GenericDao<IdentityItem> {
     fun findAll(): LiveData<List<IdentityItem>>
 
     @Query("DELETE FROM ${IdentityItem.TABLE_NAME} WHERE ${IdentityItem.COLUMN_ID} LIKE :id")
-    suspend fun deleteByID(id: Int)
+    suspend fun deleteById(id: Int)
 
     @Query("UPDATE  ${IdentityItem.TABLE_NAME} SET ${IdentityItem.COLUMN_DISPLAY_NAME} = :display, ${IdentityItem.COLUMN_USERNAME} = :username, ${IdentityItem.COLUMN_PASSWORD} =:password WHERE ${IdentityItem.COLUMN_ID} LIKE :id")
-    suspend fun update(display: String, username: String, password: String, id: Int)
+    suspend fun updateById(display: String, username: String, password: String, id: Int)
 }

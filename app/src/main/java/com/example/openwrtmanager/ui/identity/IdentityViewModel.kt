@@ -8,7 +8,8 @@ import java.util.*
 
 class IdentityViewModel(private val repository: IdentityItemRepository) : ViewModel() {
 
-        private val _text = MutableLiveData<String>().apply {
+    private val TAG = IdentityViewModel::class.qualifiedName
+    private val _text = MutableLiveData<String>().apply {
         value = "This is slideshow Fragment"
     }
     val text: LiveData<String> = _text
@@ -30,7 +31,7 @@ class IdentityViewModel(private val repository: IdentityItemRepository) : ViewMo
 
     fun updateTodo(display: String, username: String, password: String, id: Int) {
         viewModelScope.launch {
-            repository.updateIdentityItem(display,username,password,id)
+            repository.updateIdentityItem(display, username, password, id)
         }
     }
 

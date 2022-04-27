@@ -12,7 +12,7 @@ class IdentityItemRepository(
     }
 
     suspend fun updateIdentityItem(display: String, username: String, password: String, id: Int) {
-        database.identityItemDao().update(display, username, password, id)
+        database.identityItemDao().updateById(display, username, password, id)
     }
 
     fun getIdentityItems(): LiveData<List<IdentityItem>> {
@@ -20,6 +20,6 @@ class IdentityItemRepository(
     }
 
     suspend fun deleteIdentityItemByID(id: Int) {
-        database.identityItemDao().deleteByID(id)
+        database.identityItemDao().deleteById(id)
     }
 }
