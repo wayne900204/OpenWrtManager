@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -15,13 +16,19 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.openwrtmanager.R
 import com.example.openwrtmanager.com.example.openwrtmanager.AppDatabase
+import com.example.openwrtmanager.com.example.openwrtmanager.ui.device.AddDeviceViewModel
 import com.example.openwrtmanager.com.example.openwrtmanager.ui.device.DeviceUI
 import com.example.openwrtmanager.com.example.openwrtmanager.ui.device.database.DeviceItem
 import com.example.openwrtmanager.com.example.openwrtmanager.ui.device.repository.DeviceItemRepository
+import com.example.openwrtmanager.com.example.openwrtmanager.ui.device.repository.AuthenticateRepository
+import com.example.openwrtmanager.com.example.openwrtmanager.ui.device.network.ApiClient
 import com.example.openwrtmanager.com.example.openwrtmanager.ui.slideshow.database.IdentityItem
 import com.example.openwrtmanager.com.example.openwrtmanager.ui.slideshow.repository.IdentityItemRepository
 import com.example.openwrtmanager.databinding.AddDeviceFragmentBinding
 import com.example.openwrtmanager.com.example.openwrtmanager.utils.AnyViewModelFactory
+import com.example.openwrtmanager.com.example.openwrtmanager.utils.Status
+import com.example.openwrtmanager.com.example.openwrtmanager.utils.isNetworkAvailable
+
 import java.util.*
 
 class AddDeviceFragment : Fragment() {
@@ -31,7 +38,8 @@ class AddDeviceFragment : Fragment() {
     private val binding get() = _binding!!
 
     val args: AddDeviceFragmentArgs by navArgs()
-    private lateinit var viewModel: DeviceViewModel
+    private lateinit var deviceViewModel: DeviceViewModel
+    private lateinit var adddeviceViewModel: AddDeviceViewModel
     private lateinit var adapter: ArrayAdapter<String>
     var deviceUI: DeviceUI? = null
 
@@ -47,16 +55,7 @@ class AddDeviceFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val todoItemDb = AppDatabase.getInstance(requireActivity().applicationContext)
-        val deviceItemRepo = DeviceItemRepository(todoItemDb)
-        val identityItemRpo = IdentityItemRepository(todoItemDb)
-        val viewModelFactory = AnyViewModelFactory {
-            DeviceViewModel(deviceItemRepo, identityItemRpo)
-        }
-        viewModel = ViewModelProvider(requireActivity(), viewModelFactory).get(
-            DeviceViewModel::class.java
-        )
-
+        setUpViewModel()
         setInitData()
         setUiWithData()
         saveBtnOnClick()
@@ -64,13 +63,53 @@ class AddDeviceFragment : Fragment() {
         useHttpsConnectionOnClick()
 
         if (args.isEdit) {
-              binding.delete.visibility = View.VISIBLE
+            binding.delete.visibility = View.VISIBLE
+        }
+
+        binding.test.setOnClickListener {
+            if (activity?.baseContext?.let { isNetworkAvailable() }!!) {
+                adddeviceViewModel.authenticate("root", "wenyeh90").observe(viewLifecycleOwner) {
+                    it?.let { resource ->
+                        when (resource.status) {
+                            Status.SUCCESS -> {
+                                Toast.makeText(context, "Success", Toast.LENGTH_SHORT).show()
+                            }
+                            Status.ERROR -> {
+                                Toast.makeText(context, resource.message, Toast.LENGTH_SHORT).show()
+                            }
+                            else -> {}
+                        }
+                    }
+                }
+            }
         }
 
     }
 
+    private fun setUpViewModel() {
+        val todoItemDb = AppDatabase.getInstance(requireActivity().applicationContext)
+        val deviceItemRepo = DeviceItemRepository(todoItemDb)
+        val identityItemRpo = IdentityItemRepository(todoItemDb)
+        val viewModelFactory = AnyViewModelFactory {
+            DeviceViewModel(deviceItemRepo, identityItemRpo)
+        }
+
+        val a = AuthenticateRepository(ApiClient.apiService)
+
+        val test = AnyViewModelFactory {
+            AddDeviceViewModel(a)
+        }
+
+        adddeviceViewModel =
+            ViewModelProvider(requireActivity(), test).get(AddDeviceViewModel::class.java)
+
+        deviceViewModel = ViewModelProvider(requireActivity(), viewModelFactory).get(
+            DeviceViewModel::class.java
+        )
+    }
+
     private fun setInitData() {
-        viewModel.identityItemsLiveData.observe(
+        deviceViewModel.identityItemsLiveData.observe(
             viewLifecycleOwner,
             Observer { todos: List<IdentityItem> ->
                 val items: Array<String> = todos.map { it ->
@@ -81,7 +120,7 @@ class AddDeviceFragment : Fragment() {
             }
         )
         if (args.isEdit) {
-            viewModel.getDeviceItemByID(args.id).observe(viewLifecycleOwner, Observer { it ->
+            deviceViewModel.getDeviceItemByID(args.id).observe(viewLifecycleOwner, Observer { it ->
                 deviceUI?.onDeviceItemChange(it)
             })
         }
@@ -124,7 +163,7 @@ class AddDeviceFragment : Fragment() {
                 val port = binding.portInput.text.toString()
                 val ignoreBadCertificate = binding.ignoreBadCertificate.isChecked
                 if (args.isEdit) {
-                    viewModel.updateDeviceItemById(
+                    deviceViewModel.updateDeviceItemById(
                         display,
                         address,
                         port,
@@ -144,7 +183,7 @@ class AddDeviceFragment : Fragment() {
                         ignoreBadCertificate = ignoreBadCertificate,
                         createdAt = Date()
                     )
-                    viewModel.createDeviceItem(item)
+                    deviceViewModel.createDeviceItem(item)
                 }
                 findNavController().popBackStack()
             }
@@ -153,7 +192,7 @@ class AddDeviceFragment : Fragment() {
 
     private fun deleteBtnOnClick() {
         binding.delete.setOnClickListener {
-            viewModel.deleteDeviceItemByID(args.id)
+            deviceViewModel.deleteDeviceItemByID(args.id)
             findNavController().popBackStack()
         }
     }
