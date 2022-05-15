@@ -2,34 +2,29 @@ package com.example.openwrtmanager.ui.device
 
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.AutoCompleteTextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.example.openwrtmanager.R
 import com.example.openwrtmanager.com.example.openwrtmanager.AppDatabase
 import com.example.openwrtmanager.com.example.openwrtmanager.ui.device.AddDeviceViewModel
 import com.example.openwrtmanager.com.example.openwrtmanager.ui.device.DeviceUI
 import com.example.openwrtmanager.com.example.openwrtmanager.ui.device.database.DeviceItem
-import com.example.openwrtmanager.com.example.openwrtmanager.ui.device.repository.DeviceItemRepository
-import com.example.openwrtmanager.com.example.openwrtmanager.ui.device.repository.AuthenticateRepository
 import com.example.openwrtmanager.com.example.openwrtmanager.ui.device.network.ApiClient
-import com.example.openwrtmanager.com.example.openwrtmanager.ui.slideshow.database.IdentityItem
-import com.example.openwrtmanager.com.example.openwrtmanager.ui.slideshow.repository.IdentityItemRepository
-import com.example.openwrtmanager.databinding.AddDeviceFragmentBinding
+import com.example.openwrtmanager.com.example.openwrtmanager.ui.device.network.ApiService
+import com.example.openwrtmanager.com.example.openwrtmanager.ui.device.repository.AuthenticateRepository
+import com.example.openwrtmanager.com.example.openwrtmanager.ui.device.repository.DeviceItemRepository
 import com.example.openwrtmanager.com.example.openwrtmanager.utils.AnyViewModelFactory
 import com.example.openwrtmanager.com.example.openwrtmanager.utils.Status
 import com.example.openwrtmanager.com.example.openwrtmanager.utils.isNetworkAvailable
-
+import com.example.openwrtmanager.databinding.AddDeviceFragmentBinding
 import java.util.*
+
 
 class AddDeviceFragment : Fragment() {
 
@@ -40,9 +35,8 @@ class AddDeviceFragment : Fragment() {
     val args: AddDeviceFragmentArgs by navArgs()
     private lateinit var deviceViewModel: DeviceViewModel
     private lateinit var adddeviceViewModel: AddDeviceViewModel
-    private lateinit var adapter: ArrayAdapter<String>
+    private var identitiyId: Int? = null
     var deviceUI: DeviceUI? = null
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -54,48 +48,105 @@ class AddDeviceFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         setUpViewModel()
         setInitData()
         setUiWithData()
-        saveBtnOnClick()
-        deleteBtnOnClick()
-        useHttpsConnectionOnClick()
 
         if (args.isEdit) {
             binding.delete.visibility = View.VISIBLE
         }
 
+        saveBtnOnClick()
+        deleteBtnOnClick()
+        useHttpsConnectionOnClick()
+
         binding.test.setOnClickListener {
-            if (activity?.baseContext?.let { isNetworkAvailable() }!!) {
-                adddeviceViewModel.authenticate("root", "wenyeh90").observe(viewLifecycleOwner) {
-                    it?.let { resource ->
-                        when (resource.status) {
-                            Status.SUCCESS -> {
-                                Toast.makeText(context, "Success", Toast.LENGTH_SHORT).show()
+            if (inputFieldValidation()) {
+                val c = ApiClient(getUrl()).getRetrofit().create(ApiService::class.java)
+
+                val a = AuthenticateRepository(c)
+                adddeviceViewModel.changeAuthenticateRepo(a)
+                val username = binding.usernameInput.text.toString();
+                val password = binding.passwordInput.text.toString();
+                if (!binding.ipAddressInput.text.isNullOrEmpty() && !binding.displayInput.text.isNullOrEmpty() && !binding.username.text.isNullOrEmpty() && !binding.password.text.isNullOrEmpty()) {
+                    if (activity?.baseContext?.let { isNetworkAvailable() }!!) {
+                        adddeviceViewModel.authenticate(username, password)
+                            .observe(viewLifecycleOwner) {
+                                it?.let { resource ->
+                                    when (resource.status) {
+                                        Status.SUCCESS -> {
+                                            Toast.makeText(
+                                                context,
+                                                "Success",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
+                                        Status.ERROR -> {
+                                            Toast.makeText(
+                                                context,
+                                                resource.message,
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
+                                        else -> {}
+                                    }
+                                }
                             }
-                            Status.ERROR -> {
-                                Toast.makeText(context, resource.message, Toast.LENGTH_SHORT).show()
-                            }
-                            else -> {}
-                        }
                     }
                 }
             }
         }
+    }
 
+    private fun getUrl(): String {
+        var a = binding.portInput.text.toString()
+        if (binding.portInput.text.toString().equals("")) {
+            a = "80"
+        }
+        if (binding.useHttpsConnection.isChecked) {
+            return "https://" + binding.ipAddressInput.text.toString() + ":" + a + "/"
+        } else {
+            return "http://" + binding.ipAddressInput.text.toString() + ":" + a + "/"
+        }
+
+    }
+
+    private fun inputFieldValidation(): Boolean {
+        var boo = true
+        if (binding.displayInput.text.isNullOrEmpty()) {
+            binding.displayError.visibility = View.VISIBLE
+            boo = false
+        } else {
+            binding.displayError.visibility = View.GONE
+        }
+        if (binding.ipAddressInput.text.isNullOrEmpty()) {
+            boo = false
+            binding.ipAddressError.visibility = View.VISIBLE
+        } else {
+            binding.ipAddressError.visibility = View.GONE
+        }
+        if (binding.usernameInput.text.isNullOrEmpty()) {
+            boo = false
+            binding.usernameLayout.error = "Username is missing"
+        } else {
+            binding.usernameLayout.error = null
+        }
+        if (binding.passwordInput.text.isNullOrEmpty()) {
+            boo = false
+            binding.passwordLayout.error = "Password is missing"
+        } else {
+            binding.passwordLayout.error = null
+        }
+        return boo
     }
 
     private fun setUpViewModel() {
         val todoItemDb = AppDatabase.getInstance(requireActivity().applicationContext)
         val deviceItemRepo = DeviceItemRepository(todoItemDb)
-        val identityItemRpo = IdentityItemRepository(todoItemDb)
         val viewModelFactory = AnyViewModelFactory {
-            DeviceViewModel(deviceItemRepo, identityItemRpo)
+            DeviceViewModel(deviceItemRepo)
         }
-
-        val a = AuthenticateRepository(ApiClient.apiService)
-
+        val a = AuthenticateRepository(ApiClient().getRetrofit().create(ApiService::class.java))
         val test = AnyViewModelFactory {
             AddDeviceViewModel(a)
         }
@@ -109,16 +160,6 @@ class AddDeviceFragment : Fragment() {
     }
 
     private fun setInitData() {
-        deviceViewModel.identityItemsLiveData.observe(
-            viewLifecycleOwner,
-            Observer { todos: List<IdentityItem> ->
-                val items: Array<String> = todos.map { it ->
-                    it.displayName
-                }.toTypedArray()
-                deviceUI?.onIdentityItemsChange(items)
-
-            }
-        )
         if (args.isEdit) {
             deviceViewModel.getDeviceItemByID(args.id).observe(viewLifecycleOwner, Observer { it ->
                 deviceUI?.onDeviceItemChange(it)
@@ -128,25 +169,17 @@ class AddDeviceFragment : Fragment() {
 
     private fun setUiWithData() {
         deviceUI = object : DeviceUI {
-
-            override fun onIdentityItemsChange(items: Array<String>) {
-                Log.d(TAG, "onIdentityItemsChange: " + "ERROR？？？")
-                adapter =
-                    ArrayAdapter(requireContext(), R.layout.add_router_dropdown_menu, items)
-                (binding.dropdownMenu.editText as? AutoCompleteTextView)?.setAdapter(adapter)
-            }
-
             override fun onDeviceItemChange(items: DeviceItem) {
                 binding.displayInput.setText(items.displayName)
                 binding.ipAddressInput.setText(items.address)
-                binding.dropdownMenuInput.setText(items.identityUuid)
                 binding.portInput.setText(items.port)
+                binding.usernameInput.setText(items.username)
+                binding.passwordInput.setText(items.password)
                 binding.useHttpsConnection.isChecked = items.useHttpsConnection
                 binding.ignoreBadCertificate.isChecked = items.ignoreBadCertificate
-
-                if (binding.useHttpsConnection.isChecked) {
+                if (binding.useHttpsConnection.isChecked)
                     binding.ignoreBadCertificate.visibility = View.VISIBLE
-                }
+
             }
 
         }
@@ -154,30 +187,30 @@ class AddDeviceFragment : Fragment() {
 
     private fun saveBtnOnClick() {
         binding.save.setOnClickListener {
-            if (!binding.displayInput.text.isNullOrEmpty() && !binding.ipAddressInput.text.isNullOrEmpty() && !binding.portInput.text.isNullOrEmpty() && !binding.dropdownMenuInput.text.isNullOrEmpty()) {
+            if (!binding.displayInput.text.isNullOrEmpty() && !binding.ipAddressInput.text.isNullOrEmpty() && !binding.portInput.text.isNullOrEmpty() && !binding.username.text.isNullOrEmpty() && !binding.password.text.isNullOrEmpty()) {
                 val display = binding.displayInput.text.toString()
                 val address = binding.ipAddressInput.text.toString()
-                val identityUuid =
-                    (binding.dropdownMenu.editText as AutoCompleteTextView).text.toString()
                 val useHttpsConnection = binding.useHttpsConnection.isChecked
                 val port = binding.portInput.text.toString()
                 val ignoreBadCertificate = binding.ignoreBadCertificate.isChecked
+                val username = binding.usernameInput.text.toString();
+                val password = binding.passwordInput.text.toString();
                 if (args.isEdit) {
                     deviceViewModel.updateDeviceItemById(
                         display,
                         address,
                         port,
-                        identityUuid,
+                        username, password,
                         useHttpsConnection,
                         ignoreBadCertificate,
                         args.id
                     )
                 } else {
                     val item = DeviceItem(
-                        uuid = UUID.randomUUID().toString(),
                         displayName = display,
                         address = address,
-                        identityUuid = identityUuid,
+                        username = username,
+                        password = password,
                         useHttpsConnection = useHttpsConnection,
                         port = port,
                         ignoreBadCertificate = ignoreBadCertificate,

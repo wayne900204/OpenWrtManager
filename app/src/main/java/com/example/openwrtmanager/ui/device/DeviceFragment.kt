@@ -13,9 +13,8 @@ import com.example.openwrtmanager.com.example.openwrtmanager.AppDatabase
 import com.example.openwrtmanager.com.example.openwrtmanager.ui.device.DeviceAdapter
 import com.example.openwrtmanager.com.example.openwrtmanager.ui.device.database.DeviceItem
 import com.example.openwrtmanager.com.example.openwrtmanager.ui.device.repository.DeviceItemRepository
-import com.example.openwrtmanager.com.example.openwrtmanager.ui.slideshow.repository.IdentityItemRepository
-import com.example.openwrtmanager.databinding.FragmentDeviceBinding
 import com.example.openwrtmanager.com.example.openwrtmanager.utils.AnyViewModelFactory
+import com.example.openwrtmanager.databinding.FragmentDeviceBinding
 
 class DeviceFragment : Fragment() {
 
@@ -38,9 +37,8 @@ class DeviceFragment : Fragment() {
 
         val todoItemDb = AppDatabase.getInstance(requireActivity().applicationContext)
         val deviceItemRepo = DeviceItemRepository(todoItemDb)
-        val identityItemRpo = IdentityItemRepository(todoItemDb)
         val viewModelFactory = AnyViewModelFactory {
-            DeviceViewModel(deviceItemRepo, identityItemRpo)
+            DeviceViewModel(deviceItemRepo)
         }
         deviceViewModel = ViewModelProvider(requireActivity(), viewModelFactory).get(
             DeviceViewModel::class.java

@@ -4,8 +4,7 @@ import androidx.lifecycle.LiveData
 import com.example.openwrtmanager.com.example.openwrtmanager.ui.device.database.DeviceItem
 import com.example.openwrtmanager.com.example.openwrtmanager.AppDatabase
 
-class
-DeviceItemRepository(
+class DeviceItemRepository(
     private val database: AppDatabase
 ) {
     suspend fun insertDeviceItem(deviceItem: DeviceItem) {
@@ -32,7 +31,8 @@ DeviceItemRepository(
         displayName: String,
         address: String,
         port: String,
-        identityUuid: String,
+        username: String,
+        password: String,
         useHttpsConnection: Boolean,
         ignoreBadCertificate: Boolean,
         id: Int
@@ -41,7 +41,7 @@ DeviceItemRepository(
             displayName,
             address,
             port,
-            identityUuid,
+            username,password,
             useHttpsConnection,
             ignoreBadCertificate,
             id

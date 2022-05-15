@@ -7,14 +7,14 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.example.openwrtmanager.com.example.openwrtmanager.ui.device.database.DeviceItem
 import com.example.openwrtmanager.com.example.openwrtmanager.ui.device.database.DeviceItemDao
-import com.example.openwrtmanager.com.example.openwrtmanager.ui.slideshow.database.IdentityItem
-import com.example.openwrtmanager.com.example.openwrtmanager.ui.slideshow.database.IdentityItemDao
+//import com.example.openwrtmanager.com.example.openwrtmanager.ui.slideshow.database.IdentityItem
+//import com.example.openwrtmanager.com.example.openwrtmanager.ui.slideshow.database.IdentityItemDao
 import com.example.openwrtmanager.com.example.openwrtmanager.utils.Converters
 
 @Database(
     version = 1,
     entities = [
-        IdentityItem::class,
+//        IdentityItem::class,
         DeviceItem::class
     ],
     exportSchema = false
@@ -39,6 +39,6 @@ abstract class AppDatabase : RoomDatabase() {
         }
     }
 
-    abstract fun identityItemDao(): IdentityItemDao
+//    abstract fun identityItemDao(): IdentityItemDao
     abstract fun deviceItemDao(): DeviceItemDao
 }

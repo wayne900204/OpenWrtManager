@@ -12,11 +12,12 @@ import java.io.IOException
 import java.util.concurrent.TimeUnit
 
 
-object ApiClient {
+class ApiClient(var url: String = "http://192.168.56.4:80/") {
     private val TAG = ApiClient::class.qualifiedName
-    val apiService: ApiService = getRetrofit().create(ApiService::class.java)
 
-    private fun getRetrofit(): Retrofit {
+    var apiService: ApiService = getRetrofit().create(ApiService::class.java)
+
+    fun getRetrofit(): Retrofit {
         var ua = System.getProperty("http.agent")
         ua = if (ua !== null) {
             ua.toString()
@@ -49,7 +50,7 @@ object ApiClient {
                 }
             })
             .addInterceptor(HttpLoggingInterceptor().apply {
-                level = HttpLoggingInterceptor.Level.HEADERS;
+                level = HttpLoggingInterceptor.Level.HEADERS
                 level = HttpLoggingInterceptor.Level.BODY
             })
             .followRedirects(false)
@@ -60,7 +61,7 @@ object ApiClient {
             .build()
 
         return Retrofit.Builder()
-            .baseUrl("http://192.168.56.4:80/")
+            .baseUrl(url)
             .addConverterFactory(GsonConverterFactory.create())
             .client(okHttpClient)
             .build()

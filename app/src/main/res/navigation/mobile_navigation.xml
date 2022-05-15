@@ -23,12 +23,19 @@
 
     <fragment
         android:id="@+id/nav_identity"
-        android:name="com.example.openwrtmanager.ui.identity.IdentityFragment"
+        android:name="com.example.openwrtmanager.ui.information.IdentityFragment"
         android:label="@string/menu_slideshow"
         tools:layout="@layout/fragment_identity">
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_info"
+        android:name="com.example.openwrtmanager.ui.info.InfoFragment"
+        android:label="@string/menu_device"
+        tools:layout="@layout/fragment_info" >
         <action
-            android:id="@+id/actionIdentityFragmentToAddIdentityFragment"
-            app:destination="@id/add_identity_page" />
+            android:id="@+id/actionInfoFragmentToAddInfoFragment"
+            app:destination="@id/add_info_page" />
     </fragment>
 
 
@@ -47,36 +54,9 @@
     </fragment>
 
     <fragment
-        android:id="@+id/add_identity_page"
-        android:name="com.example.openwrtmanager.ui.identity.AddIdentityFragment"
-        tools:layout="@layout/add_identity_fragment">
-        <argument
-            android:name="uuid"
-            app:argType="string"
-            android:defaultValue="@null"
-            app:nullable="true"/>
-        <argument
-            android:name="display"
-            app:argType="string"
-            android:defaultValue="@null"
-            app:nullable="true"/>
-        <argument
-            android:name="username"
-            app:argType="string"
-            android:defaultValue="@null"
-            app:nullable="true"/>
-        <argument
-            android:name="password"
-            app:argType="string"
-            android:defaultValue="@null"
-            app:nullable="true"/>
-        <argument
-            android:name="id"
-            app:argType="integer"
-            android:defaultValue="0"/>
-        <argument
-            android:name="is_edit"
-            app:argType="boolean"
-            android:defaultValue="false"/>
+        android:id="@+id/add_info_page"
+        android:name="com.example.openwrtmanager.ui.info.AddInfoFragment"
+        tools:layout="@layout/fragment_add_info" >
     </fragment>
+
 </navigation>
