@@ -4,8 +4,69 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import androidx.fragment.app.Fragment
+import java.lang.Math.log
+import java.lang.Math.pow
+import java.util.concurrent.TimeUnit
+import kotlin.math.truncate
 
 
+class Utils {
+
+    //    static const bool ReleaseMode = bool.fromEnvironment('dart.vm.product', defaultValue: false);
+    companion object {
+        var NoSpeedCalculationText = "-----"
+        fun formatSeconds(seconds: Long): String {
+            val days = TimeUnit.SECONDS.toDays(seconds).toInt()
+            val hours: Int =
+                (TimeUnit.SECONDS.toHours(seconds) - TimeUnit.SECONDS.toDays(seconds) * 24).toInt()
+            val minutes: Int =
+                (TimeUnit.SECONDS.toMinutes(seconds) - TimeUnit.SECONDS.toHours(seconds) * 60).toInt()
+            val seconds: Int =
+                (TimeUnit.SECONDS.toSeconds(seconds) - TimeUnit.SECONDS.toMinutes(seconds) * 60).toInt()
+
+
+//            var  tokens : List<String> = listOf();
+            val tokens: MutableList<String> = mutableListOf();
+            if (days != 0) {
+//                tokens.add('${days}d');
+                tokens.add("${days}d");
+            }
+            if (tokens.isNotEmpty() || hours != 0) {
+//                tokens.add('${hours}h');
+                tokens.add("${hours}h");
+            }
+            if (tokens.isNotEmpty() || minutes != 0) {
+//                tokens.add('${minutes}m');
+                tokens.add("${minutes}m");
+            }
+            tokens.add("${seconds}s");
+            return tokens.joinToString(" ")
+        }
+
+        //        static String formatBytes(int bytes, {int decimals = 0}) {
+//            if (bytes <= 0) return "0 B";
+//            const suffixes = ["B", "Kb", "Mb", "Gb", "Tb", "Pb"];
+//            var i = (log(bytes) / log(1024)).floor();
+//            var number = (bytes / pow(1024, i));
+//            return (number).toStringAsFixed(number.truncateToDouble() == number ? 0 : decimals) +
+//            ' ' +
+//                    suffixes[i];
+//        }
+        fun formatBytes(bytes: Int, decimals: Int = 0): String {
+            if (bytes <= 0) return "0 B";
+            var suffixes = listOf("B", "Kb", "Mb", "Gb", "Tb", "Pb")
+            val i = Math.floor(log(bytes.toDouble()) / log(1_024.0));
+            val number = (bytes / pow(1024.0, i));
+
+//            return number.toStringAsFixed(if (number.truncateToDouble() === number) 0 else decimals) +
+//                    ' ' +
+//                    suffixes[i.toInt()]
+            val a = if (truncate(number) == number) 0 else decimals
+            return String.format("%.${a}f", number) + ' ' +
+                    suffixes[i.toInt()];
+        }
+    }
+}
 //
 //// Add data to the intent, the receiving app will decide
 //fun Fragment.shareData(username: String, isGist: Boolean) {

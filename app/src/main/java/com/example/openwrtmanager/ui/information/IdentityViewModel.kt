@@ -61,7 +61,9 @@ class IdentityViewModel(private var authenticateRepository: InfoRepository,cooki
         )
         val intervalFlow = interval(initialDelayMillis = 0, periodMillis = 5_000)
             .flatMapLatest {
-                flow<LCE<List<InfoResponseModelItem>>> { emit(LCE.Content(authenticateRepository.getInformation(rrrrr))) }
+                flow<LCE<List<InfoResponseModelItem>>> {
+                    emit(LCE.Content(authenticateRepository.getInformation(rrrrr)))
+                }
                     .onStart { emit(LCE.Loading) }
                     .catch { emit(LCE.Error(it)) }
             }

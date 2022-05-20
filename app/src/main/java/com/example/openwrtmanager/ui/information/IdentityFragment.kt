@@ -39,7 +39,7 @@ class IdentityFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val a = InfoRepository(InfoClient().getInfoRetrofit().create(InfoService::class.java))
         val test = AnyViewModelFactory {
-            IdentityViewModel(a, "3f8eb2c06109827a939650ac15a59bee")
+            IdentityViewModel(a, "a72058f30b540f01fe16c3b80e3bb59e")
         }
 
         identityViewModel =
@@ -53,9 +53,6 @@ class IdentityFragment : Fragment() {
             when (lce) {
                 is LCE.Content -> {
                     adapter.submitList(lce.content.toMutableList())
-//                    if(lce.content[0].result[1] is Map<*, *>){
-//                        Log.d(TAG,"result"+ (lce.content[0].result[1] as Map<*,*>)["memory"])
-//                    }
                 }
 //                is LCE.Content -> Toast.makeText(
 //                    requireContext(),

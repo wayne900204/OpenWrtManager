@@ -3,46 +3,52 @@ package com.example.openwrtmanager.com.example.openwrtmanager.ui.device
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
-import com.example.openwrtmanager.R
 import com.example.openwrtmanager.com.example.openwrtmanager.ui.device.database.DeviceItem
-import com.example.openwrtmanager.ui.device.AddDeviceFragment
+import com.example.openwrtmanager.databinding.ListItemIdentitiyBinding
 import com.example.openwrtmanager.ui.device.DeviceFragmentDirections
 
 
 class DeviceAdapter : RecyclerView.Adapter<DeviceAdapter.MyViewHolder>() {
     private val TAG = DeviceAdapter::class.qualifiedName
     var feeds: List<DeviceItem> = listOf()
-
+    var row_index = -1
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DeviceAdapter.MyViewHolder {
-        return LayoutInflater.from(parent.context).inflate(R.layout.item_identitiy, parent, false)
-            .run(::MyViewHolder)
+        return MyViewHolder(ListItemIdentitiyBinding.inflate(LayoutInflater.from(parent.context),parent,false))
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        holder.bindView(feeds[position])
+        holder.bindView(feeds[position],position)
     }
 
     override fun getItemCount() = feeds.size
 
-    inner class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val display = itemView.findViewById<TextView>(R.id.display)
-        private val itemIdentity = itemView.findViewById<ConstraintLayout>(R.id.item_identity)
+    inner class MyViewHolder(private val binding:ListItemIdentitiyBinding) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bindView(item: DeviceItem) {
-            display.text = item.displayName
-            display.text = item.displayName
+        fun bindView(item: DeviceItem, position: Int) {
+            binding.display.text = item.displayName
 
-            itemIdentity.setOnClickListener {
-                val action =
+            binding.itemIdentity.setOnClickListener {
+
+
+                if(row_index==position){
+                                    val action =
                     DeviceFragmentDirections.actionDeviceFragmentToAddDeviceFragment(item.id, true)
                 itemView.findNavController().navigate(action)
+                }
+                row_index=position;
+                notifyDataSetChanged()
+
+
+            }
+            if(row_index==position){
+                binding.isUsing.visibility = View.VISIBLE
+            }else{
+                binding.isUsing.visibility = View.GONE
             }
         }
+
     }
 
     fun updateAdapterData(todos: List<DeviceItem>) {

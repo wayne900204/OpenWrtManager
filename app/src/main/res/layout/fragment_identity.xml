@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingBottom="60dp"
-        tools:listitem="@layout/item_identitiy" />
+        tools:listitem="@layout/list_item_identitiy" />
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/request"
         android:layout_width="wrap_content"
