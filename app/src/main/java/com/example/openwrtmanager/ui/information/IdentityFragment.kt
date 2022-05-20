@@ -39,7 +39,7 @@ class IdentityFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val a = InfoRepository(InfoClient().getInfoRetrofit().create(InfoService::class.java))
         val test = AnyViewModelFactory {
-            IdentityViewModel(a, "6da81b1b1b20741459565e59251bc844")
+            IdentityViewModel(a, "3f8eb2c06109827a939650ac15a59bee")
         }
 
         identityViewModel =

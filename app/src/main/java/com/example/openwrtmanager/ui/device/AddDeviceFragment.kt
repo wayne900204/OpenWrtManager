@@ -100,7 +100,7 @@ class AddDeviceFragment : Fragment() {
 
     private fun getUrl(): String {
         var a = binding.portInput.text.toString()
-        if (binding.portInput.text.toString().equals("")) {
+        if (binding.portInput.text.toString() == "" || binding.portInput.text.toString().toInt() <=0) {
             a = "80"
         }
         if (binding.useHttpsConnection.isChecked) {
