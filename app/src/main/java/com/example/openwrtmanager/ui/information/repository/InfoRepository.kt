@@ -5,5 +5,5 @@ import com.example.openwrtmanager.com.example.openwrtmanager.ui.identity.model.I
 import com.example.openwrtmanager.com.example.openwrtmanager.ui.information.model.InfoResponseModelItem
 
 class InfoRepository(private val apiHelper: InfoService) {
-    suspend fun getInformation(body:List<InfoRequestModel>): List<InfoResponseModelItem> = apiHelper.getInformation(body)
+    suspend fun getInformation(url:String, body:List<InfoRequestModel>): List<InfoResponseModelItem> = apiHelper.getInformation(url+"cgi-bin/luci/admin/ubus",body)
 }

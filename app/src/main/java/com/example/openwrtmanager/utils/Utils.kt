@@ -65,6 +65,18 @@ class Utils {
             return String.format("%.${a}f", number) + ' ' +
                     suffixes[i.toInt()];
         }
+
+        fun getUrl(port: String, address: String, isUseHttpsConnection: Boolean): String {
+            var postt = port
+            if (port == "" || port.toInt() <= 0) {
+                postt = "80"
+            }
+            if (isUseHttpsConnection) {
+                return "https://$address:$postt/"
+            } else {
+                return "http://$address:$postt/"
+            }
+        }
     }
 }
 //

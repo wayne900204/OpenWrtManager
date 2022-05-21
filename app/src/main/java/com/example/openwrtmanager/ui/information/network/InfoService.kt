@@ -4,11 +4,12 @@ import com.example.openwrtmanager.com.example.openwrtmanager.ui.identity.model.I
 import com.example.openwrtmanager.com.example.openwrtmanager.ui.information.model.InfoResponseModelItem
 import retrofit2.http.Body
 import retrofit2.http.POST
+import retrofit2.http.Url
 
 
 // Github Doc - https://developer.github.com/v3/
 
 interface InfoService {
-    @POST("cgi-bin/luci/admin/ubus")
-    suspend fun getInformation(@Body requestBody: List<InfoRequestModel>): List<InfoResponseModelItem>
+    @POST()
+    suspend fun getInformation(@Url url:String, @Body requestBody: List<InfoRequestModel>): List<InfoResponseModelItem>
 }

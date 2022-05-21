@@ -1,6 +1,7 @@
 package com.example.openwrtmanager.ui.device
 
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -62,19 +63,19 @@ class AddDeviceFragment : Fragment() {
 
         binding.test.setOnClickListener {
             if (inputFieldValidation()) {
-                val c = ApiClient(getUrl()).getRetrofit().create(ApiService::class.java)
-
-                val a = AuthenticateRepository(c)
-                adddeviceViewModel.changeAuthenticateRepo(a)
                 val username = binding.usernameInput.text.toString();
                 val password = binding.passwordInput.text.toString();
                 if (!binding.ipAddressInput.text.isNullOrEmpty() && !binding.displayInput.text.isNullOrEmpty() && !binding.username.text.isNullOrEmpty() && !binding.password.text.isNullOrEmpty()) {
                     if (activity?.baseContext?.let { isNetworkAvailable() }!!) {
-                        adddeviceViewModel.authenticate(username, password)
+                        adddeviceViewModel.authenticate(username, password,getUrl())
                             .observe(viewLifecycleOwner) {
                                 it?.let { resource ->
                                     when (resource.status) {
                                         Status.SUCCESS -> {
+                                            val pref = requireActivity().getSharedPreferences("OpenWrt", Context.MODE_PRIVATE)
+                                            val editor = pref.edit()
+                                            editor.putString("cookie",resource.data)
+
                                             Toast.makeText(
                                                 context,
                                                 "Success",
@@ -146,7 +147,7 @@ class AddDeviceFragment : Fragment() {
         val viewModelFactory = AnyViewModelFactory {
             DeviceViewModel(deviceItemRepo)
         }
-        val a = AuthenticateRepository(ApiClient().getRetrofit().create(ApiService::class.java))
+        val a = AuthenticateRepository(ApiClient.getRetrofit().create(ApiService::class.java))
         val test = AnyViewModelFactory {
             AddDeviceViewModel(a)
         }

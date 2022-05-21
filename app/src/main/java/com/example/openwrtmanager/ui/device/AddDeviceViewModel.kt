@@ -8,20 +8,16 @@ import kotlinx.coroutines.Dispatchers
 
 class AddDeviceViewModel(private var authenticateRepository: AuthenticateRepository) : ViewModel() {
 
-    fun changeAuthenticateRepo( authenticateRepository: AuthenticateRepository){
-        this.authenticateRepository = authenticateRepository
-    }
-
-    fun authenticate(username: String, password: String) = liveData(Dispatchers.IO) {
+    fun authenticate(username: String, password: String, domain:String) = liveData(Dispatchers.IO) {
         emit(Resource.loading(data = null))
         try {
-            val response = authenticateRepository.authenticate(username, password)
+            val response = authenticateRepository.authenticate(username, password,domain)
             if (response.code() == 302) {
                 val cookieList = response.headers().values("Set-Cookie")
                 val cookieId = cookieList[0].split(";").toTypedArray()[0]
                 val cookieName = cookieId.split("=").toTypedArray()[0]
                 if (cookieName.equals("sysauth")) {
-                    emit(Resource.success(data = authenticateRepository.authenticate(username, password)))
+                    emit(Resource.success(data = cookieId.split("=").toTypedArray()[1] ))
                     return@liveData
                 }
             }

@@ -18,6 +18,9 @@ interface DeviceItemDao : GenericDao<DeviceItem> {
     @Query("SELECT * FROM ${DeviceItem.TABLE_NAME} WHERE ${DeviceItem.COLUMN_ID} LIKE :id")
     fun getById(id: Int): LiveData<DeviceItem>
 
+    @Query("SELECT * FROM ${DeviceItem.TABLE_NAME} WHERE ${DeviceItem.COLUMN_ID} LIKE :id")
+    suspend fun suspendGetDeviceDeviceItemById(id: Int): DeviceItem
+
     @Query("UPDATE  ${DeviceItem.TABLE_NAME} SET ${DeviceItem.COLUMN_DISPLAY_NAME} = :displayName, ${DeviceItem.COLUMN_ADDRESS} = :address, ${DeviceItem.COLUMN_PORT} = :port,${DeviceItem.COLUMN_USERNAME} = :username, ${DeviceItem.COLUMN_PASSWORD} = :password, ${DeviceItem.COLUMN_USE_HTTPS_CONNECTION} = :useHttpsConnection, ${DeviceItem.COLUMN_IGNORE_BAD_CERTIFICATE} = :ignoreBadCertificate WHERE ${DeviceItem.COLUMN_ID} LIKE :id")
     suspend fun updateById(
         displayName: kotlin.String,
