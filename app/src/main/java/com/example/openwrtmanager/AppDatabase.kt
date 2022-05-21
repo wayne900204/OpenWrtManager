@@ -14,7 +14,6 @@ import com.example.openwrtmanager.com.example.openwrtmanager.utils.Converters
 @Database(
     version = 1,
     entities = [
-//        IdentityItem::class,
         DeviceItem::class
     ],
     exportSchema = false

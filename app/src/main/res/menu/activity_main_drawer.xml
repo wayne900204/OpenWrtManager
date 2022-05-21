@@ -16,9 +16,5 @@
             android:id="@+id/nav_identity"
             android:icon="@drawable/ic_menu_slideshow"
             android:title="Identity" />
-        <item
-            android:id="@+id/nav_info"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Info" />
     </group>
 </menu>

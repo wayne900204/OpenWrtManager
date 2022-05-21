@@ -1,21 +1,18 @@
 package com.example.openwrtmanager.ui.information
 
-import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.example.openwrtmanager.com.example.openwrtmanager.ui.device.repository.AuthenticateRepository
 import com.example.openwrtmanager.com.example.openwrtmanager.ui.device.repository.DeviceItemRepository
 import com.example.openwrtmanager.com.example.openwrtmanager.ui.identity.model.InfoRequestModel
 import com.example.openwrtmanager.com.example.openwrtmanager.ui.identity.repository.InfoRepository
 import com.example.openwrtmanager.com.example.openwrtmanager.ui.identity.repository.interval
 import com.example.openwrtmanager.com.example.openwrtmanager.ui.information.model.InfoResponseModelItem
+import com.example.openwrtmanager.com.example.openwrtmanager.utils.MyLogger
+import com.example.openwrtmanager.com.example.openwrtmanager.utils.Utils
 import com.google.gson.JsonObject
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 
 sealed interface LCE<out T> {
     data class Content<out T>(val content: T) : LCE<T>
@@ -36,31 +33,64 @@ class InfoViewModel(
 
     val lceLiveData: LiveData<LCE<List<InfoResponseModelItem>>> get() = _lceLiveData
 
-    fun init(deviceId: Int) {
-        var  authIsCorrect:Boolean = false
-        var cookie = ""
-        var url = ""
-        runBlocking {
-            viewModelScope.launch(IO) {
-                val username = deviceItemRepo.suspendGetDeviceItemById(deviceId).username
-                val password = deviceItemRepo.suspendGetDeviceItemById(deviceId).password
-//                val password = deviceItemRepo.suspendGetDeviceItemById(deviceId).password
-                val response = authenticateRepo.authenticate(username, password, "http://192.168.56.4/")
-                try {
-                    if (response.code() == 302) {
-                        val cookieList = response.headers().values("Set-Cookie")
-                        val cookieId = cookieList[0].split(";").toTypedArray()[0]
-                        val cookieName = cookieId.split("=").toTypedArray()[0]
-                        if (cookieName.equals("sysauth")) {
-                            cookie = cookieId.split("=").toTypedArray()[1]
-                            authIsCorrect = true
-                        }
-                    }
-                } catch (exception: Exception) {
+    private     var  authIsCorrect:Boolean = false
+    private var cookie = ""
+    private var domain = ""
+
+    fun authenticate(deviceId: Int) = liveData(IO) {
+        emit(LCE.Loading)
+        try {
+            val username = deviceItemRepo.suspendGetDeviceItemById(deviceId).username
+            val password = deviceItemRepo.suspendGetDeviceItemById(deviceId).password
+             domain = Utils.getUrl(
+                deviceItemRepo.suspendGetDeviceItemById(deviceId).port,
+                deviceItemRepo.suspendGetDeviceItemById(deviceId).address,
+                deviceItemRepo.suspendGetDeviceItemById(deviceId).useHttpsConnection
+            )
+            val response = authenticateRepo.authenticate(username, password, domain)
+            if (response.code() == 302) {
+                val cookieList = response.headers().values("Set-Cookie")
+                val cookieId = cookieList[0].split(";").toTypedArray()[0]
+                val cookieName = cookieId.split("=").toTypedArray()[0]
+                if (cookieName.equals("sysauth")) {
+                    cookie = cookieId.split("=").toTypedArray()[1]
+                    authIsCorrect = true
+                    emit(LCE.Content(cookieId.split("=").toTypedArray()[1]))
+                    return@liveData
                 }
-            }.join()
+            }
+            emit(LCE.Error(throwable = Throwable("Forbidden")))
+        } catch (exception: Exception) {
+            emit(LCE.Error(throwable = exception))
         }
-        Log.d(TAG, "init: "+"hihi")
+    }
+
+    fun init(deviceId: Int) {
+//          authIsCorrect:Boolean = false
+//         cookie = ""
+//         url = ""
+//        runBlocking {
+//            viewModelScope.launch(IO) {
+//                val username = deviceItemRepo.suspendGetDeviceItemById(deviceId).username
+//                val password = deviceItemRepo.suspendGetDeviceItemById(deviceId).password
+//                url = Utils.getUrl(deviceItemRepo.suspendGetDeviceItemById(deviceId).port,deviceItemRepo.suspendGetDeviceItemById(deviceId).address,deviceItemRepo.suspendGetDeviceItemById(deviceId).useHttpsConnection)
+////                val password = deviceItemRepo.suspendGetDeviceItemById(deviceId).password
+//                val response = authenticateRepo.authenticate(username, password, url)
+//                try {
+//                    if (response.code() == 302) {
+//                        val cookieList = response.headers().values("Set-Cookie")
+//                        val cookieId = cookieList[0].split(";").toTypedArray()[0]
+//                        val cookieName = cookieId.split("=").toTypedArray()[0]
+//                        if (cookieName.equals("sysauth")) {
+//                            cookie = cookieId.split("=").toTypedArray()[1]
+//                            authIsCorrect = true
+//                        }
+//                    }
+//                } catch (exception: Exception) {
+//                }
+//            }.join()
+//        }
+
 
         val requestBodyJson = listOf(
             InfoRequestModel(id = 1, params = listOf<Any>(cookie, "system", "info", JsonObject())),
@@ -76,19 +106,17 @@ class InfoViewModel(
         val intervalFlow = interval(initialDelayMillis = 0, periodMillis = 5_000)
             .flatMapLatest {
                 flow {
-                    Log.d(TAG, "authIsCorrect: "+authIsCorrect)
                     if(authIsCorrect){
-                        val response = infoRepository.getInformation("http://192.168.56.4/",requestBodyJson)
-                        Log.d(TAG, "response: "+response)
+                        val response = infoRepository.getInformation(domain,requestBodyJson)
+                        MyLogger.d(TAG, "Information Response: "+response)
                         if (!response[0].result.isNullOrEmpty()) {
-                            emit(LCE.Content(infoRepository.getInformation("http://192.168.56.4/",requestBodyJson)))
+                            emit(LCE.Content(infoRepository.getInformation(domain,requestBodyJson)))
                         } else {
                             emit(LCE.Error(Throwable("WRONG COOKIE")))
                         }
                     }else{
                         emit(LCE.Error(Throwable("WRONG COOKIE")))
                     }
-
 
                 }
                     .onStart { emit(LCE.Loading) }

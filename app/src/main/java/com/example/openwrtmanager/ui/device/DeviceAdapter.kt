@@ -27,7 +27,7 @@ class DeviceAdapter : RecyclerView.Adapter<DeviceAdapter.MyViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        holder.bindView(feeds[position])
+        holder.bindView(feeds[position],position)
     }
 
     override fun getItemCount() = feeds.size
@@ -37,9 +37,14 @@ class DeviceAdapter : RecyclerView.Adapter<DeviceAdapter.MyViewHolder>() {
         val pref = binding.root.context.getSharedPreferences("OpenWrt", Context.MODE_PRIVATE)
         var editor = pref.edit()
 
-        fun bindView(item: DeviceItem) {
+        fun bindView(item: DeviceItem, position: Int) {
             binding.display.text = item.displayName
-
+            if(feeds.isEmpty()){
+                editor.putInt("device_select_item_id",-1).commit()
+            }
+            if ( feeds.size==1) {
+                editor.putInt("device_select_item_id",feeds.first().id).commit()
+            }
             binding.itemIdentity.setOnClickListener {
 
                 if (pref.getInt("device_select_item_id", -1) == item.id) {

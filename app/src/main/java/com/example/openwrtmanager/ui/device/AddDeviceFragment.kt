@@ -21,6 +21,7 @@ import com.example.openwrtmanager.com.example.openwrtmanager.ui.device.network.A
 import com.example.openwrtmanager.com.example.openwrtmanager.ui.device.repository.AuthenticateRepository
 import com.example.openwrtmanager.com.example.openwrtmanager.ui.device.repository.DeviceItemRepository
 import com.example.openwrtmanager.com.example.openwrtmanager.utils.AnyViewModelFactory
+import com.example.openwrtmanager.com.example.openwrtmanager.utils.LoadingDialog
 import com.example.openwrtmanager.com.example.openwrtmanager.utils.Status
 import com.example.openwrtmanager.com.example.openwrtmanager.utils.isNetworkAvailable
 import com.example.openwrtmanager.databinding.AddDeviceFragmentBinding
@@ -38,6 +39,8 @@ class AddDeviceFragment : Fragment() {
     private lateinit var adddeviceViewModel: AddDeviceViewModel
     private var identitiyId: Int? = null
     var deviceUI: DeviceUI? = null
+
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -52,7 +55,7 @@ class AddDeviceFragment : Fragment() {
         setUpViewModel()
         setInitData()
         setUiWithData()
-
+        val loadingDialog = LoadingDialog(requireActivity())
         if (args.isEdit) {
             binding.delete.visibility = View.VISIBLE
         }
@@ -71,25 +74,17 @@ class AddDeviceFragment : Fragment() {
                             .observe(viewLifecycleOwner) {
                                 it?.let { resource ->
                                     when (resource.status) {
+                                        Status.LOADING->{
+                                            loadingDialog.startLoadingDialog()
+                                        }
                                         Status.SUCCESS -> {
-                                            val pref = requireActivity().getSharedPreferences("OpenWrt", Context.MODE_PRIVATE)
-                                            val editor = pref.edit()
-                                            editor.putString("cookie",resource.data)
-
-                                            Toast.makeText(
-                                                context,
-                                                "Success",
-                                                Toast.LENGTH_SHORT
-                                            ).show()
+                                            loadingDialog.dismissDialog()
+                                            Toast.makeText(context, "Success", Toast.LENGTH_SHORT).show()
                                         }
                                         Status.ERROR -> {
-                                            Toast.makeText(
-                                                context,
-                                                resource.message,
-                                                Toast.LENGTH_SHORT
-                                            ).show()
+                                            loadingDialog.dismissDialog()
+                                            Toast.makeText(context, resource.message, Toast.LENGTH_SHORT).show()
                                         }
-                                        else -> {}
                                     }
                                 }
                             }
@@ -144,13 +139,9 @@ class AddDeviceFragment : Fragment() {
     private fun setUpViewModel() {
         val todoItemDb = AppDatabase.getInstance(requireActivity().applicationContext)
         val deviceItemRepo = DeviceItemRepository(todoItemDb)
-        val viewModelFactory = AnyViewModelFactory {
-            DeviceViewModel(deviceItemRepo)
-        }
+        val viewModelFactory = AnyViewModelFactory { DeviceViewModel(deviceItemRepo) }
         val a = AuthenticateRepository(ApiClient.getRetrofit().create(ApiService::class.java))
-        val test = AnyViewModelFactory {
-            AddDeviceViewModel(a)
-        }
+        val test = AnyViewModelFactory { AddDeviceViewModel(a) }
 
         adddeviceViewModel =
             ViewModelProvider(requireActivity(), test).get(AddDeviceViewModel::class.java)
@@ -227,6 +218,9 @@ class AddDeviceFragment : Fragment() {
     private fun deleteBtnOnClick() {
         binding.delete.setOnClickListener {
             deviceViewModel.deleteDeviceItemByID(args.id)
+            val pref = binding.root.context.getSharedPreferences("OpenWrt", Context.MODE_PRIVATE)
+            val editor = pref.edit()
+            editor.putInt("device_select_item_id",-1).apply()
             findNavController().popBackStack()
         }
     }

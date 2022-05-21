@@ -7,5 +7,4 @@ class AnyViewModelFactory<T : ViewModel?>(val creator: () -> T) : ViewModelProvi
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return creator() as T
     }
-
 }
