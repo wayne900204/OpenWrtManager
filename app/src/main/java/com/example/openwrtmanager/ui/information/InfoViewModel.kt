@@ -7,7 +7,6 @@ import com.example.openwrtmanager.com.example.openwrtmanager.ui.identity.model.I
 import com.example.openwrtmanager.com.example.openwrtmanager.ui.identity.repository.InfoRepository
 import com.example.openwrtmanager.com.example.openwrtmanager.ui.identity.repository.interval
 import com.example.openwrtmanager.com.example.openwrtmanager.ui.information.model.InfoResponseModelItem
-import com.example.openwrtmanager.com.example.openwrtmanager.utils.MyLogger
 import com.example.openwrtmanager.com.example.openwrtmanager.utils.Utils
 import com.google.gson.JsonObject
 import kotlinx.coroutines.Dispatchers.IO
@@ -42,7 +41,7 @@ class InfoViewModel(
         try {
             val username = deviceItemRepo.suspendGetDeviceItemById(deviceId).username
             val password = deviceItemRepo.suspendGetDeviceItemById(deviceId).password
-             domain = Utils.getUrl(
+             domain = Utils.coverUrl(
                 deviceItemRepo.suspendGetDeviceItemById(deviceId).port,
                 deviceItemRepo.suspendGetDeviceItemById(deviceId).address,
                 deviceItemRepo.suspendGetDeviceItemById(deviceId).useHttpsConnection
@@ -65,10 +64,7 @@ class InfoViewModel(
         }
     }
 
-    fun init(deviceId: Int) {
-//          authIsCorrect:Boolean = false
-//         cookie = ""
-//         url = ""
+    fun init() {
 //        runBlocking {
 //            viewModelScope.launch(IO) {
 //                val username = deviceItemRepo.suspendGetDeviceItemById(deviceId).username
@@ -91,7 +87,6 @@ class InfoViewModel(
 //            }.join()
 //        }
 
-
         val requestBodyJson = listOf(
             InfoRequestModel(id = 1, params = listOf<Any>(cookie, "system", "info", JsonObject())),
             InfoRequestModel(id = 2, params = listOf<Any>(cookie, "system", "board", JsonObject())),
@@ -103,12 +98,12 @@ class InfoViewModel(
             InfoRequestModel(id = 8, params = listOf<Any>(cookie, "luci", "getConntrackList", JsonObject())),
         )
 
-        val intervalFlow = interval(initialDelayMillis = 0, periodMillis = 5_000)
+        val intervalFlow = interval(initialDelayMillis = 0, periodMillis = 3_000)
             .flatMapLatest {
                 flow {
                     if(authIsCorrect){
                         val response = infoRepository.getInformation(domain,requestBodyJson)
-                        MyLogger.d(TAG, "Information Response: "+response)
+//                        MyLogger.d(TAG, "Information Response: "+response)
                         if (!response[0].result.isNullOrEmpty()) {
                             emit(LCE.Content(infoRepository.getInformation(domain,requestBodyJson)))
                         } else {

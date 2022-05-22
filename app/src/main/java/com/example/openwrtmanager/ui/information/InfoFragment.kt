@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.openwrtmanager.com.example.openwrtmanager.AppDatabase
 import com.example.openwrtmanager.com.example.openwrtmanager.ui.device.network.ApiClient
@@ -57,6 +58,9 @@ class InfoFragment : Fragment() {
         binding.infoRecyclerView.adapter = adapter
         binding.infoRecyclerView.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+//        binding.infoRecyclerView.itemAnimator!!.changeDuration = 0
+        binding.infoRecyclerView.addItemDecoration(DividerItemDecoration(binding.root.context, DividerItemDecoration.VERTICAL))
+        binding.infoRecyclerView.itemAnimator = null
         adapter.submitList(mutableListOf())
         val handler = Handler()
 
@@ -78,7 +82,7 @@ class InfoFragment : Fragment() {
                                 }.join()
                             }
                             MyLogger.i(TAG, "COOKIE：" + lce.content)
-                            infoViewModel.init(pref.getInt("device_select_item_id", -1))
+                            infoViewModel.init()
                             infoViewModel.start()
                         }
                         is LCE.Error -> {

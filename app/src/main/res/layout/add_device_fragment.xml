@@ -16,6 +16,7 @@
         android:textColor="@color/black"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
     <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/display_input"
         android:layout_width="match_parent"
@@ -27,22 +28,22 @@
         tools:ignore="SpeakableTextPresentCheck" />
 
     <TextView
-        android:visibility="gone"
-        android:textColor="@color/red"
         android:id="@+id/display_error"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="display name is missing"
+        android:textColor="@color/red"
+        android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/display_input"/>
+        app:layout_constraintTop_toBottomOf="@+id/display_input" />
 
     <TextView
-        android:visibility="gone"
-        android:textColor="@color/red"
         android:id="@+id/identity_error"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="identity name is missing"
+        android:textColor="@color/warning"
+        android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/display_error" />
 
@@ -71,9 +72,9 @@
         android:id="@+id/ip_address_input"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="X.X.X.X"
-        android:lineSpacingMultiplier="@integer/material_motion_duration_long_2"
         android:layout_marginLeft="-4dp"
+        android:hint="X.X.X.X"
+        android:lines="1"
         app:layout_constraintEnd_toStartOf="@+id/port_input"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ip_address" />
@@ -82,24 +83,21 @@
         android:id="@+id/port_input"
         android:layout_width="130dp"
         android:layout_height="wrap_content"
-        android:hint="80/443"
         android:layout_marginLeft="-4dp"
-        android:inputType="phone"
+        android:hint="80/443"
+        android:inputType="number"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ip_address" />
 
     <TextView
-        android:visibility="gone"
         android:id="@+id/ip_address_error"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="ip_address is missing"
-        android:textColor="@color/red"
+        android:textColor="@color/warning"
+        android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ip_address_input" />
-
-
-
 
 
     <androidx.appcompat.widget.AppCompatTextView
@@ -111,25 +109,26 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ip_address_error" />
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/username_layout"
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/username_input"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:errorIconDrawable="@null"
+        android:layout_marginLeft="-4dp"
+        android:hint="X.X.X.X"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.428"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/username">
+        app:layout_constraintTop_toBottomOf="@+id/username" />
 
-        <androidx.appcompat.widget.AppCompatEditText
-            android:id="@+id/username_input"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="-4dp"
-            android:background="@color/white"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/username" />
-    </com.google.android.material.textfield.TextInputLayout>
+    <TextView
+        android:id="@+id/username_error"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="username is missing"
+        android:textColor="@color/warning"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/username_input" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/password"
@@ -138,32 +137,26 @@
         android:text="Password"
         android:textColor="@color/black"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/username_layout" />
+        app:layout_constraintTop_toBottomOf="@+id/username_error" />
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/password_layout"
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/password_input"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:errorIconDrawable="@null"
+        android:layout_marginLeft="-4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/password">
+        app:layout_constraintTop_toBottomOf="@+id/password" />
 
-        <androidx.appcompat.widget.AppCompatEditText
-            android:id="@+id/password_input"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="-4dp"
-            android:background="@color/white"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/password" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-
-
-
-
+    <TextView
+        android:id="@+id/password_input_error"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="password is missing"
+        android:textColor="@color/warning"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/password_input" />
     <CheckBox
         android:id="@+id/use_https_connection"
         android:layout_width="wrap_content"
@@ -174,7 +167,7 @@
         app:layout_constraintEnd_toStartOf="@+id/ignore_bad_certificate"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/password_layout" />
+        app:layout_constraintTop_toBottomOf="@+id/password_input_error" />
 
     <CheckBox
         android:id="@+id/ignore_bad_certificate"
@@ -186,7 +179,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/use_https_connection"
-        app:layout_constraintTop_toBottomOf="@+id/password_layout" />
+        app:layout_constraintTop_toBottomOf="@+id/password_input_error" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/test"
@@ -196,8 +189,8 @@
         android:text="Test"
         android:textColor="@color/white"
         app:layout_constraintTop_toBottomOf="@+id/ignore_bad_certificate" />
+
     <androidx.appcompat.widget.AppCompatButton
-        android:visibility="gone"
         android:id="@+id/delete"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -205,19 +198,21 @@
         android:background="@color/red"
         android:text="Delete"
         android:textColor="@color/white"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/test" />
+
     <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/save"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginVertical="15dp"
         android:background="@color/blue"
         android:text="Save"
-        android:id="@+id/save"
         android:textColor="@color/white"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/delete" />
 </androidx.constraintlayout.widget.ConstraintLayout>
 

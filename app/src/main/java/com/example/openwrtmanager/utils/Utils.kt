@@ -4,8 +4,6 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import androidx.fragment.app.Fragment
-import java.lang.Math.log
-import java.lang.Math.pow
 import java.util.concurrent.TimeUnit
 import kotlin.math.truncate
 
@@ -37,27 +35,26 @@ class Utils {
             tokens.add("${seconds}s");
             return tokens.joinToString(" ")
         }
-    }
-
-    fun formatBytes(bytes: Int, decimals: Int = 0): String {
-        if (bytes <= 0) return "0 B";
-        var suffixes = listOf("B", "Kb", "Mb", "Gb", "Tb", "Pb")
-        val i = Math.floor(log(bytes.toDouble()) / log(1_024.0));
-        val number = (bytes / pow(1024.0, i));
-        val a = if (truncate(number) == number) 0 else decimals
-        return String.format("%.${a}f", number) + ' ' +
-                suffixes[i.toInt()];
-    }
-
-    fun getUrl(port: String, address: String, isUseHttpsConnection: Boolean): String {
-        var postt = port
-        if (port == "" || port.toInt() <= 0) {
-            postt = "80"
+        fun coverUrl(port: String, address: String, isUseHttpsConnection: Boolean): String {
+            var postt = port
+            if (port == "" || port.toInt() <= 0) {
+                postt = "80"
+            }
+            if (isUseHttpsConnection) {
+                return "https://$address:$postt/"
+            } else {
+                return "http://$address:$postt/"
+            }
         }
-        if (isUseHttpsConnection) {
-            return "https://$address:$postt/"
-        } else {
-            return "http://$address:$postt/"
+        fun formatBytes(bytes: Byte, decimals: Int =0): String {
+            if (bytes <= 0) return "0 B";
+            val suffixes = listOf("B", "Kb", "Mb", "Gb", "Tb", "Pb")
+            val i = Math.floor(Math.log(bytes.toDouble()) / Math.log(1_024.0));
+            val number = (bytes / Math.pow(1024.0, i));
+
+            val a = if (truncate(number) == number) 0 else decimals
+            return String.format("%.${a}f", number) + ' ' +
+                    suffixes[i.toInt()];
         }
     }
 }

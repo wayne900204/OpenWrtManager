@@ -2,7 +2,10 @@ package com.example.openwrtmanager.ui.device
 
 
 import android.content.Context
+import android.net.InetAddresses
+import android.os.Build
 import android.os.Bundle
+import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -59,6 +62,29 @@ class AddDeviceFragment : Fragment() {
         if (args.isEdit) {
             binding.delete.visibility = View.VISIBLE
         }
+//        val filters = arrayOfNulls<InputFilter>(1)
+//        filters[0] = InputFilter { source, start, end, dest, dstart, dend ->
+//            if (end > start) {
+//                val destTxt = dest.toString()
+//                val resultingTxt = (destTxt.substring(0, dstart)
+//                        + source.subSequence(start, end)
+//                        + destTxt.substring(dend))
+//                if (!resultingTxt
+//                        .matches("^\\d{1,3}(\\.(\\d{1,3}(\\.(\\d{1,3}(\\.(\\d{1,3})?)?)?)?)?)?".toRegex())
+//                ) {
+//                    return@InputFilter ""
+//                } else {
+//                    val splits = resultingTxt.split("\\.").toTypedArray()
+//                    for (i in splits.indices) {
+//                        if (Integer.valueOf(splits[i]) > 255) {
+//                            return@InputFilter ""
+//                        }
+//                    }
+//                }
+//            }
+//            null
+//        }
+//        binding.ipAddressInput.setFilters(filters)
 
         saveBtnOnClick()
         deleteBtnOnClick()
@@ -70,20 +96,25 @@ class AddDeviceFragment : Fragment() {
                 val password = binding.passwordInput.text.toString();
                 if (!binding.ipAddressInput.text.isNullOrEmpty() && !binding.displayInput.text.isNullOrEmpty() && !binding.username.text.isNullOrEmpty() && !binding.password.text.isNullOrEmpty()) {
                     if (activity?.baseContext?.let { isNetworkAvailable() }!!) {
-                        adddeviceViewModel.authenticate(username, password,getUrl())
+                        adddeviceViewModel.authenticate(username, password, getUrl())
                             .observe(viewLifecycleOwner) {
                                 it?.let { resource ->
                                     when (resource.status) {
-                                        Status.LOADING->{
+                                        Status.LOADING -> {
                                             loadingDialog.startLoadingDialog()
                                         }
                                         Status.SUCCESS -> {
                                             loadingDialog.dismissDialog()
-                                            Toast.makeText(context, "Success", Toast.LENGTH_SHORT).show()
+                                            Toast.makeText(context, "Success", Toast.LENGTH_SHORT)
+                                                .show()
                                         }
                                         Status.ERROR -> {
                                             loadingDialog.dismissDialog()
-                                            Toast.makeText(context, resource.message, Toast.LENGTH_SHORT).show()
+                                            Toast.makeText(
+                                                context,
+                                                resource.message,
+                                                Toast.LENGTH_SHORT
+                                            ).show()
                                         }
                                     }
                                 }
@@ -96,7 +127,9 @@ class AddDeviceFragment : Fragment() {
 
     private fun getUrl(): String {
         var a = binding.portInput.text.toString()
-        if (binding.portInput.text.toString() == "" || binding.portInput.text.toString().toInt() <=0) {
+        if (binding.portInput.text.toString() == "" || binding.portInput.text.toString()
+                .toInt() <= 0
+        ) {
             a = "80"
         }
         if (binding.useHttpsConnection.isChecked) {
@@ -117,21 +150,28 @@ class AddDeviceFragment : Fragment() {
         }
         if (binding.ipAddressInput.text.isNullOrEmpty()) {
             boo = false
+            binding.ipAddressError.text = "IP Address is Missing"
             binding.ipAddressError.visibility = View.VISIBLE
         } else {
-            binding.ipAddressError.visibility = View.GONE
+            if (!isIpValid(binding.ipAddressInput.text.toString())) {
+                boo = false
+                binding.ipAddressError.text = "IP FORMAT IS NOT CORRECT"
+                binding.ipAddressError.visibility = View.VISIBLE
+            } else {
+                binding.ipAddressError.visibility = View.GONE
+            }
         }
         if (binding.usernameInput.text.isNullOrEmpty()) {
             boo = false
-            binding.usernameLayout.error = "Username is missing"
+            binding.usernameError.visibility = View.VISIBLE
         } else {
-            binding.usernameLayout.error = null
+            binding.usernameError.visibility = View.GONE
         }
         if (binding.passwordInput.text.isNullOrEmpty()) {
             boo = false
-            binding.passwordLayout.error = "Password is missing"
+            binding.passwordInputError.visibility = View.VISIBLE
         } else {
-            binding.passwordLayout.error = null
+            binding.passwordInputError.visibility = View.GONE
         }
         return boo
     }
@@ -177,40 +217,53 @@ class AddDeviceFragment : Fragment() {
         }
     }
 
+
+    fun isIpValid(ip: String): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            InetAddresses.isNumericAddress(ip)
+        } else {
+            Patterns.IP_ADDRESS.matcher(ip).matches()
+        }
+    }
+
     private fun saveBtnOnClick() {
+
         binding.save.setOnClickListener {
-            if (!binding.displayInput.text.isNullOrEmpty() && !binding.ipAddressInput.text.isNullOrEmpty() && !binding.portInput.text.isNullOrEmpty() && !binding.username.text.isNullOrEmpty() && !binding.password.text.isNullOrEmpty()) {
-                val display = binding.displayInput.text.toString()
-                val address = binding.ipAddressInput.text.toString()
-                val useHttpsConnection = binding.useHttpsConnection.isChecked
-                val port = binding.portInput.text.toString()
-                val ignoreBadCertificate = binding.ignoreBadCertificate.isChecked
-                val username = binding.usernameInput.text.toString();
-                val password = binding.passwordInput.text.toString();
-                if (args.isEdit) {
-                    deviceViewModel.updateDeviceItemById(
-                        display,
-                        address,
-                        port,
-                        username, password,
-                        useHttpsConnection,
-                        ignoreBadCertificate,
-                        args.id
-                    )
-                } else {
-                    val item = DeviceItem(
-                        displayName = display,
-                        address = address,
-                        username = username,
-                        password = password,
-                        useHttpsConnection = useHttpsConnection,
-                        port = port,
-                        ignoreBadCertificate = ignoreBadCertificate,
-                        createdAt = Date()
-                    )
-                    deviceViewModel.createDeviceItem(item)
+            if (inputFieldValidation()) {
+                if (!binding.displayInput.text.isNullOrEmpty() && !binding.ipAddressInput.text.isNullOrEmpty() && !binding.username.text.isNullOrEmpty() && !binding.password.text.isNullOrEmpty()) {
+                    val display = binding.displayInput.text.toString()
+                    val address = binding.ipAddressInput.text.toString()
+                    val useHttpsConnection = binding.useHttpsConnection.isChecked
+                    val port =
+                        if (binding.portInput.text.isNullOrEmpty()) "80" else binding.portInput.text
+                    val ignoreBadCertificate = binding.ignoreBadCertificate.isChecked
+                    val username = binding.usernameInput.text.toString();
+                    val password = binding.passwordInput.text.toString();
+                    if (args.isEdit) {
+                        deviceViewModel.updateDeviceItemById(
+                            display,
+                            address,
+                            port.toString(),
+                            username, password,
+                            useHttpsConnection,
+                            ignoreBadCertificate,
+                            args.id
+                        )
+                    } else {
+                        val item = DeviceItem(
+                            displayName = display,
+                            address = address,
+                            username = username,
+                            password = password,
+                            useHttpsConnection = useHttpsConnection,
+                            port = port.toString(),
+                            ignoreBadCertificate = ignoreBadCertificate,
+                            createdAt = Date()
+                        )
+                        deviceViewModel.createDeviceItem(item)
+                    }
+                    findNavController().popBackStack()
                 }
-                findNavController().popBackStack()
             }
         }
     }
@@ -220,7 +273,7 @@ class AddDeviceFragment : Fragment() {
             deviceViewModel.deleteDeviceItemByID(args.id)
             val pref = binding.root.context.getSharedPreferences("OpenWrt", Context.MODE_PRIVATE)
             val editor = pref.edit()
-            editor.putInt("device_select_item_id",-1).apply()
+            editor.putInt("device_select_item_id", -1).apply()
             findNavController().popBackStack()
         }
     }

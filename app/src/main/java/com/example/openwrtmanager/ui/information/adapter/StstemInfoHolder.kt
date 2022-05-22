@@ -10,11 +10,9 @@ import com.example.openwrtmanager.databinding.ListItemSystemBinding
 
 class SystemInfoHolder(private val binding: ListItemSystemBinding) : RecyclerView.ViewHolder(
     binding.root
-//    LayoutInflater.from(parent.context).inflate(R.layout.list_item_system, parent, false)
 ) {
     private val TAG = SystemInfoHolder::class.qualifiedName
 
-    //    private val checkbox: TextView = itemView.findViewById(R.id.status_view)
     private val linearLayout: LinearLayout = itemView.findViewById(R.id.item_system_linear_layout)
 
     @SuppressLint("SetTextI18n")

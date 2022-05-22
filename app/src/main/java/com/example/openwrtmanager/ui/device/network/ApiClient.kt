@@ -14,8 +14,8 @@ object ApiClient {
     fun getRetrofit(): Retrofit {
         val okHttpClient: OkHttpClient = OkHttpClient.Builder()
             .addInterceptor(HttpLoggingInterceptor().apply {
-                level = HttpLoggingInterceptor.Level.HEADERS
-                level = HttpLoggingInterceptor.Level.BODY
+//                level = HttpLoggingInterceptor.Level.HEADERS
+//                level = HttpLoggingInterceptor.Level.BODY
             })
             .followRedirects(false)
             .followSslRedirects(false)
