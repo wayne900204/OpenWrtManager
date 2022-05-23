@@ -21,6 +21,7 @@ import com.example.openwrtmanager.com.example.openwrtmanager.ui.device.repositor
 import com.example.openwrtmanager.com.example.openwrtmanager.ui.identity.network.InfoClient
 import com.example.openwrtmanager.com.example.openwrtmanager.ui.identity.repository.InfoRepository
 import com.example.openwrtmanager.com.example.openwrtmanager.ui.information.InfoAdapter
+import com.example.openwrtmanager.com.example.openwrtmanager.ui.information.model.InfoResponseModelItem
 import com.example.openwrtmanager.com.example.openwrtmanager.utils.AnyViewModelFactory
 import com.example.openwrtmanager.com.example.openwrtmanager.utils.LoadingDialog
 import com.example.openwrtmanager.com.example.openwrtmanager.utils.MyLogger
@@ -58,7 +59,6 @@ class InfoFragment : Fragment() {
         binding.infoRecyclerView.adapter = adapter
         binding.infoRecyclerView.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-//        binding.infoRecyclerView.itemAnimator!!.changeDuration = 0
         binding.infoRecyclerView.addItemDecoration(DividerItemDecoration(binding.root.context, DividerItemDecoration.VERTICAL))
         binding.infoRecyclerView.itemAnimator = null
         adapter.submitList(mutableListOf())
@@ -103,7 +103,20 @@ class InfoFragment : Fragment() {
 
         infoViewModel.lceLiveData.observe(viewLifecycleOwner, Observer { lce ->
             when (lce) {
-                is LCE.Content -> adapter.submitList(lce.content.toMutableList())
+                is LCE.Content -> {
+                    val recyclerViewState = binding.infoRecyclerView.layoutManager?.onSaveInstanceState()
+                    val newitem = mutableListOf<MutableList<InfoResponseModelItem>>(
+                        mutableListOf<InfoResponseModelItem>(lce.content[0],lce.content[1]), // position = 0
+                        mutableListOf<InfoResponseModelItem>(lce.content[4]),                // position = 1
+                        mutableListOf<InfoResponseModelItem>(lce.content[3],lce.content[4]), // position = 2
+                        mutableListOf<InfoResponseModelItem>(lce.content[5],lce.content[6]),                // position = 3
+                        mutableListOf<InfoResponseModelItem>(lce.content[0],lce.content[1]), // position = 4
+                        mutableListOf<InfoResponseModelItem>(lce.content[7]), // position = 5
+                    )
+                    adapter.submitList(newitem){
+                        binding.infoRecyclerView.layoutManager?.onRestoreInstanceState(recyclerViewState)
+                    }
+                    }
                 is LCE.Error -> Toast.makeText(
                     requireContext(),
                     (lce.throwable.toString()),
