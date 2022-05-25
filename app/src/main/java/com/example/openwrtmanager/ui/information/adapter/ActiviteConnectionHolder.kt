@@ -1,6 +1,7 @@
 package com.example.openwrtmanager.com.example.openwrtmanager.ui.information.adapter
 
 import android.annotation.SuppressLint
+import android.graphics.Typeface
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -9,7 +10,7 @@ import com.example.openwrtmanager.com.example.openwrtmanager.ui.information.adap
 import com.example.openwrtmanager.com.example.openwrtmanager.ui.information.model.InfoResponseModelItem
 import com.example.openwrtmanager.com.example.openwrtmanager.utils.Utils
 import com.example.openwrtmanager.databinding.ListItemActiviceConnectionBinding
-import com.example.openwrtmanager.databinding.ViewstyleNetworkInterfaceBinding
+import com.example.openwrtmanager.databinding.ViewstyleActiveConnectionsBinding
 import kotlin.math.roundToInt
 
 class ActiviteConnection {
@@ -94,8 +95,13 @@ class ActiviteConnectionHolder(private val binding: ListItemActiviceConnectionBi
 //                Log.d("DEBUG", " UI bytes: " + Utils.formatBytes(bytes.toByte(), 2));
 //                Log.d("DEBUG", " UI ProtocolText src: " + getProtocolText(con, "src", "sport"));
 //                Log.d("DEBUG", " UI ProtocolText dst: " + getProtocolText(con, "dst", "dport"));
-                val childView = ViewstyleNetworkInterfaceBinding.inflate(LayoutInflater.from(binding.root.context))
-                childView.interfaceName.setText("${if(speedText!="")speedText else (Utils.NoSpeedCalculationText + " Kb/s")}")
+                val childView = ViewstyleActiveConnectionsBinding.inflate(LayoutInflater.from(binding.root.context))
+                childView.layer.setText(con["layer3"].toString()+"/"+con["layer4"].toString())
+                childView.speedText.setText(if(speedText!="")speedText else (Utils.NoSpeedCalculationText + " Kb/s"))
+                childView.bytes.setText(Utils.formatBytes(bytes.toByte(), 2))
+                childView.bytes.setTypeface(null, Typeface.BOLD_ITALIC);
+                childView.dstProtocolText.setText(getProtocolText(con, "dst", "dport"))
+                childView.srcProtocolText.setText(getProtocolText(con, "src", "sport"))
                 view.add(childView.root.rootView)
             }
 
@@ -104,6 +110,7 @@ class ActiviteConnectionHolder(private val binding: ListItemActiviceConnectionBi
             lastTrafficDataTimeStamp = currentTimeStamp;
 
             if (ipToResolve.size > 0) {
+                // TODO: 把本 openwrt 的 ip 換成名稱
 //                var cli = OpenWRTClient(widget.device, null);
 //                cli.getRemoteDns(widget.authenticationStatus, ipToResolve).then((res) {
 //                    if (res.status == ReplyStatus.Ok) {
