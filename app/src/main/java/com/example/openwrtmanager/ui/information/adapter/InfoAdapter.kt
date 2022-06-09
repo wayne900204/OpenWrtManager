@@ -6,9 +6,15 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.openwrtmanager.com.example.openwrtmanager.ui.information.adapter.*
+import com.example.openwrtmanager.com.example.openwrtmanager.ui.information.adapter.ActiviteConnectionHolder
+import com.example.openwrtmanager.com.example.openwrtmanager.ui.information.adapter.IpNetworkStatusHolder
+import com.example.openwrtmanager.com.example.openwrtmanager.ui.information.adapter.IpNetworkTrafficHolder
+import com.example.openwrtmanager.com.example.openwrtmanager.ui.information.adapter.SystemInfoHolder
 import com.example.openwrtmanager.com.example.openwrtmanager.ui.information.model.InfoResponseModelItem
-import com.example.openwrtmanager.databinding.*
+import com.example.openwrtmanager.databinding.ListItemActiviceConnectionBinding
+import com.example.openwrtmanager.databinding.ListItemIpStatusBinding
+import com.example.openwrtmanager.databinding.ListItemNetworkTrafficBinding
+import com.example.openwrtmanager.databinding.ListItemSystemBinding
 
 
 // 1. onBindViewHolder 查看第幾  SAMPLE:2 個 item 要對應哪一個畫面
@@ -27,8 +33,8 @@ class InfoAdapter : ListAdapter<MutableList<InfoResponseModelItem>, RecyclerView
             0 -> SystemInfoHolder(ListItemSystemBinding.inflate(LayoutInflater.from(parent.context),parent,false))
             1 -> IpNetworkStatusHolder(ListItemIpStatusBinding.inflate(LayoutInflater.from(parent.context),parent,false))
             2 -> IpNetworkTrafficHolder(ListItemNetworkTrafficBinding.inflate(LayoutInflater.from(parent.context),parent,false))
-            3 -> WifiStatusHolder(ListItemWifiStatusBinding.inflate(LayoutInflater.from(parent.context),parent,false))
-            5 -> ActiviteConnectionHolder(ListItemActiviceConnectionBinding.inflate(LayoutInflater.from(parent.context),parent,false))
+//            3 -> WifiStatusHolder(ListItemWifiStatusBinding.inflate(LayoutInflater.from(parent.context),parent,false))
+            3 -> ActiviteConnectionHolder(ListItemActiviceConnectionBinding.inflate(LayoutInflater.from(parent.context),parent,false))
             else -> SystemInfoHolder(ListItemSystemBinding.inflate(LayoutInflater.from(parent.context),parent,false))
         }
     }
@@ -38,8 +44,8 @@ class InfoAdapter : ListAdapter<MutableList<InfoResponseModelItem>, RecyclerView
             0 -> (holder as SystemInfoHolder).bind(currentList[position][0],currentList[position][1])
             1 -> (holder as IpNetworkStatusHolder).bind(currentList[position][0])
             2 -> (holder as IpNetworkTrafficHolder).bind(currentList[position][0],currentList[position][1])
-            3 -> (holder as WifiStatusHolder).bind(currentList[position][0] ,currentList[position][1] )
-            5 -> (holder as ActiviteConnectionHolder).bind(currentList[position][0] )
+//            3 -> (holder as WifiStatusHolder).bind(currentList[position][0] ,currentList[position][1] )
+            3 -> (holder as ActiviteConnectionHolder).bind(currentList[position][0] )
             else->{}
         }
     }

@@ -136,7 +136,7 @@ class ActiviteConnectionHolder(private val binding: ListItemActiviceConnectionBi
         return b.toString().toDouble().roundToInt();
     }
 
-    fun checkIpForLookup(ip: Any, ipToResolve: MutableList<String>) {
+    private fun checkIpForLookup(ip: Any, ipToResolve: MutableList<String>) {
         if (!_ipLookup.containsKey(ip)) {
             ipToResolve.add(ip as String)
             _ipLookup.put(ip, ip)

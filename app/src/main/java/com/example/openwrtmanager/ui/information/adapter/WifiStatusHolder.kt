@@ -7,34 +7,34 @@ import com.example.openwrtmanager.com.example.openwrtmanager.ui.information.mode
 import com.example.openwrtmanager.databinding.ListItemWifiStatusBinding
 
 
-class WifiStatusHolder(private val binding: ListItemWifiStatusBinding) :
-    RecyclerView.ViewHolder(
-        binding.root
-    ) {
-    private val TAG = SystemInfoHolder::class.qualifiedName
-
-    @SuppressLint("SetTextI18n")
-    fun bind(wifiStatus: InfoResponseModelItem, wirelessDeviceData: InfoResponseModelItem) {
-        val _interfaces = mutableListOf<String>()
-        val view = mutableListOf<View>()
-        var ifnameToApData = mutableMapOf<String, Map<String, Any>>();
-
-        val hostHintData = (wifiStatus.result.get(1) as Map<*, *>)
-        var macToHostsMap = mutableMapOf<String, Any>();
-//        Log.d("DEBUG", " wifiStatus: " + hostHintData);
-        for (mac in hostHintData.keys) {
-            try {
-                var maccc = hostHintData[mac] as Map<*, *>
-                if (maccc != null && maccc["name"] != null) {
-                    macToHostsMap.put(mac as String, maccc["name"]!!)
-                }
-            } catch (exception: Exception) {
-            }
-        }
-//        val wirelessDeviceData = (wirelessDeviceData.result.get(1) as Map<*, *>)
-//        if(wirelessDeviceData!=null){
-//            for (radio in wirelessDeviceData.keys) {
-//                var interfaces = (wirelessDeviceData[radio] as Map<*, *>)["interfaces"] as Map<*, *>;
+//class WifiStatusHolder(private val binding: ListItemWifiStatusBinding) :
+//    RecyclerView.ViewHolder(
+//        binding.root
+//    ) {
+//    private val TAG = SystemInfoHolder::class.qualifiedName
+//
+//    @SuppressLint("SetTextI18n")
+//    fun bind(wifiStatus: InfoResponseModelItem, wirelessDeviceData: InfoResponseModelItem) {
+//        val _interfaces = mutableListOf<String>()
+//        val view = mutableListOf<View>()
+//        var ifnameToApData = mutableMapOf<String, Map<String, Any>>();
+//
+//        val hostHintData = (wifiStatus.result.get(1) as Map<*, *>)
+//        var macToHostsMap = mutableMapOf<String, Any>();
+////        Log.d("DEBUG", " wifiStatus: " + hostHintData);
+//        for (mac in hostHintData.keys) {
+//            try {
+//                var maccc = hostHintData[mac] as Map<*, *>
+//                if (maccc != null && maccc["name"] != null) {
+//                    macToHostsMap.put(mac as String, maccc["name"]!!)
+//                }
+//            } catch (exception: Exception) {
+//            }
+//        }
+//        val wirelessDeviceDataaaaaa = (wirelessDeviceData.result[1]) as Map<*, *>
+//        if(wirelessDeviceDataaaaaa!=null){
+//            for (radio in wirelessDeviceDataaaaaa.keys) {
+//                var interfaces = (wirelessDeviceDataaaaaa[radio] as Map<*, *>)["interfaces"] as Map<*, *>;
 //                for (interfaceee in interfaces) {
 //                    var hihi = interfaceee as Map<*, *>
 //                    ifnameToApData.put(
@@ -78,6 +78,6 @@ class WifiStatusHolder(private val binding: ListItemWifiStatusBinding) :
 //                e, stackTrace, "Error with WIFI data" + infoText);
 //        }
 //        var wirelessDeviceData = data[1]
-
-    }
-}
+//
+//    }
+//}

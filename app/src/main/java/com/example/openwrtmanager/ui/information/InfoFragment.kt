@@ -109,8 +109,8 @@ class InfoFragment : Fragment() {
                         mutableListOf<InfoResponseModelItem>(lce.content[0],lce.content[1]), // position = 0
                         mutableListOf<InfoResponseModelItem>(lce.content[4]),                // position = 1
                         mutableListOf<InfoResponseModelItem>(lce.content[3],lce.content[4]), // position = 2
-                        mutableListOf<InfoResponseModelItem>(lce.content[5],lce.content[6]),                // position = 3
-                        mutableListOf<InfoResponseModelItem>(lce.content[0],lce.content[1]), // position = 4
+//                        mutableListOf<InfoResponseModelItem>(lce.content[5],lce.content[6]),                // position = 3
+//                        mutableListOf<InfoResponseModelItem>(lce.content[0],lce.content[1]), // position = 4
                         mutableListOf<InfoResponseModelItem>(lce.content[7]), // position = 5
                     )
                     adapter.submitList(newitem){
